@@ -12,7 +12,7 @@ void saveIntMeta(char *fileName,char *dataName,int *data,int dataCnt);
 
 void saveParticleHDF(Domain *D,int iteration)
 {
-    int i,s,minI,maxI,startI,endI,cnt,dataCnt=10;
+    int i,s,minI,maxI,startI,endI,cnt,dataCnt=10,n,*N;
     int start,index,totalCnt,cntList[D->nSpecies];
     char fileName[100],dataName[100],attrName[100];
     double bucketZ,dPhi,*data,*gam0P;
@@ -48,13 +48,22 @@ void saveParticleHDF(Domain *D,int iteration)
       cntP[s] = (int *)malloc(nTasks*sizeof(int ));
     }
 
+    N=(int *)malloc(D->nSpecies*sizeof(int ));
+    LL=D->loadList;
+    s=0;
+    while(LL->next) {
+       N[s]=LL->numInBeamlet;
+       LL=LL->next;
+       s++;
+    }
+
     for(s=0; s<D->nSpecies; s++)
     {
       cnt=0;
       for(i=startI; i<endI; i++)  {
         p=particle[i].head[s]->pt;
         while(p)   {
-          cnt++;
+          cnt+=N[s];
           p=p->next;
         }
       }
@@ -83,17 +92,19 @@ void saveParticleHDF(Domain *D,int iteration)
         for(i=startI; i<endI; i++)  {
           p=particle[i].head[s]->pt;
           while(p)    {
-            data[index*dataCnt+0]=p->theta;
-            data[index*dataCnt+1]=p->x;
-            data[index*dataCnt+2]=p->y;
-            data[index*dataCnt+3]=p->gamma;
-            data[index*dataCnt+4]=p->px;
-            data[index*dataCnt+5]=p->py;
-            data[index*dataCnt+6]=p->weight;
-            data[index*dataCnt+7]=p->index;
-            data[index*dataCnt+8]=i-startI+minI;
-            data[index*dataCnt+9]=p->core;
-            index++;
+            for(n=0; n<N[s]; n++) {
+              data[index*dataCnt+0]=p->theta[n];
+              data[index*dataCnt+1]=p->x[n];
+              data[index*dataCnt+2]=p->y[n];
+              data[index*dataCnt+3]=p->gamma[n];
+              data[index*dataCnt+4]=p->px[n];
+              data[index*dataCnt+5]=p->py[n];
+              data[index*dataCnt+6]=p->weight;
+              data[index*dataCnt+7]=p->index;
+              data[index*dataCnt+8]=i-startI+minI;
+              data[index*dataCnt+9]=p->core;            
+              index++;
+            }  
             p=p->next;
           }
         }
@@ -167,6 +178,7 @@ void saveParticleHDF(Domain *D,int iteration)
 
     for(s=0; s<D->nSpecies; s++) free(cntP[s]); free(cntP);
     free(gam0P);
+    free(N);
 
     if(myrank==0) printf("%s is made.\n",fileName); else ;
 }

@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
  
 //    removeFile(&D);
 
-    loadSeed(&D,iteration);
+    //loadSeed(&D,iteration);
 
-    if(myrank==0) testK_quadG(&D); else ;
-    MPI_Barrier(MPI_COMM_WORLD);
+    //if(myrank==0) testK_quadG(&D); else ;
+    //MPI_Barrier(MPI_COMM_WORLD);
 //printf("myrank=%d,iteration=%d, testK_quadG is done\n",myrank,iteration);
 
     //loading  beam
@@ -85,7 +85,6 @@ int main(int argc, char *argv[])
       updateBFactor(&D,iteration);
 //printf("myrank=%d,iteration=%d, updateTotalEnergy is done\n",myrank,iteration);
 
-
       // save files
       if(iteration>=D.saveStart) {
         if(iteration%D.saveStep==0 || iteration==D.maxStep-1) {
@@ -102,38 +101,39 @@ int main(int argc, char *argv[])
       }  else ;
 
 
+      
 //printf("myrank=%d,iteration=%d, before solveField is done\n",myrank,iteration);
-      if(D.driftFlag==OFF)  solveField(D,iteration); else ;
+      //if(D.driftFlag==OFF)  solveField(D,iteration); else ;
 //printf("myrank=%d,iteration=%d, solveField is done\n",myrank,iteration);
 
 		//Chicane
-      chicane_test(&D,iteration);
-      if(D.chicaneFlag==ON) {
-       	if(D.calChicaneFlag==ON) {
-			   calParticleDelay(&D,iteration);
+      //chicane_test(&D,iteration);
+      //if(D.chicaneFlag==ON) {
+      // 	if(D.calChicaneFlag==ON) {
+		//	   calParticleDelay(&D,iteration);
        	   //if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
    
-            if(D.chi_SSON==ON) {
+       //     if(D.chi_SSON==ON) {
          //     seed_Field_test(&D);
 		   //	  selfSeed_Field(&D);
          //	  if(myrank==0) printf("self-seeding is performed. at step=%d\n",iteration); 
-            } else {
-       	     shiftChicaneField(&D);
-			     if(myrank==0) printf("Chicane is performed. at step=%d\n",iteration); else ;
-		      }
-			} else ;
+       //     } else {
+       //	     shiftChicaneField(&D);
+		//	     if(myrank==0) printf("Chicane is performed. at step=%d\n",iteration); else ;
+		 //     }
+		//	} else ;
       	
 			//transversePush(&D,iteration);
-      } else {
+      //} else {
 			
-			set_chicane_zero(&D);		
+		//	set_chicane_zero(&D);		
 
-			if(D.driftFlag==OFF && D.mode==Time_Dependent)
-			  shiftField(D,iteration);
-			else ;
+		//	if(D.driftFlag==OFF && D.mode==Time_Dependent)
+		//	  shiftField(D,iteration);
+		//	else ;
 //printf("myrank=%d,iteration=%d, shiftField is done\n",myrank,iteration);
 
-      	updateK_quadG(&D,iteration,0);
+      //	updateK_quadG(&D,iteration,0);
 //printf("myrank=%d,iteration=%d, 1st updateK is done\n",myrank,iteration);
 
       	// twiss parameters
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
       	//transversePush(&D,iteration);
 //printf("myrank=%d,iteration=%d, 1st transversePush is done\n",myrank,iteration);
 
-      	updateK_quadG(&D,iteration,0.5);
+      //	updateK_quadG(&D,iteration,0.5);
 //printf("myrank=%d,iteration=%d, 2st updateK is done\n",myrank,iteration);
 
 			if(D.driftFlag==OFF) push_theta_gamma(&D,iteration); 
@@ -164,9 +164,9 @@ int main(int argc, char *argv[])
 
 //         rearrangeParticles(&D,iteration);
 
-		}	//End of chicaneFlag==OFF
+	//	}	//End of chicaneFlag==OFF
 
-
+      
 
       if(myrank==0 && iteration%10==0) printf("iteration=%d\n",iteration); else ;
       
@@ -177,13 +177,13 @@ int main(int argc, char *argv[])
     saveTotalEnergy(&D);
     saveTotalBFactor(&D);
 //printf("myrank=%d,iteration=%d, saveTotalEnergy is done\n",myrank,iteration);
-    /*
+    
 
-   if(myrank==0) {
+//   if(myrank==0) {
 //      if(D.mode==Static || D.mode==Twiss) 
-	      save_twiss(&D);
+//	      save_twiss(&D);
 //      else;
-    } else ;
+//    } else ;
 //printf("myrank=%d,iteration=%d, savetwiss is done\n",myrank,iteration);
 
     end=clock();
@@ -192,8 +192,8 @@ int main(int argc, char *argv[])
 	   //fprintf(out,"Time duration at %ddump:%.4gmin\n",iteration,time_spent);
 	   printf("Time duration at %ddump:%.4gmin\n",iteration,time_spent);
     } else ;
-*/
-    cleanMemory(&D);
+
+//    cleanMemory(&D);
 
     MPI_Finalize();
 

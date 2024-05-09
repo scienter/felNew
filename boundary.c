@@ -109,11 +109,11 @@ void boundary(Domain *D)
    D->Uc=complexMemory3Asign(D->numHarmony,D->subSliceN+2,D->nx,D->ny);
    D->ScU=complexMemory3Asign(D->numHarmony,D->subSliceN+2,D->nx,D->ny);
    D->totalEnergy=(double **)malloc(D->maxStep*sizeof(double *));
-   for(i=0; i<D->maxStep; i++)
+   D->totalBunch=(double **)malloc(D->maxStep*sizeof(double *));
+   for(i=0; i<D->maxStep; i++) {
      D->totalEnergy[i]=(double *)malloc(D->numHarmony*sizeof(double ));
-   D->totalBunch=(double *)malloc(D->maxStep*sizeof(double ));
-	for(i=0; i<D->maxStep; i++)
-	   D->totalBunch[i]=0.0;
+     D->totalBunch[i]=(double *)malloc(3*sizeof(double ));
+   }
 
    // space charge
    nz = D->subSliceN+2;

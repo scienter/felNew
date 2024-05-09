@@ -5,6 +5,7 @@
 #include <math.h>
 #include "mpi.h"
 
+/*
 void rearrangeParticles(Domain *D,int iteration)
 {
     Particle *particle;
@@ -67,45 +68,66 @@ void rearrangeParticles(Domain *D,int iteration)
       }		//End of for(s)
     }		//End of for(i)
 }
+*/
 
 void periodicParticles(Domain *D,int iteration)
 {
     Particle *particle;
     particle=D->particle;
 
-    int i,s,intThe;
+    int i,s,intThe,n,*N,calFlag;
     int startI,endI,nSpecies;
-    double dPhi,theta;
+    double dPhi,aveTh,delTh;
+    LoadList *LL;    
     ptclList *p;
 
     startI=1;  endI=D->subSliceN+1;
     nSpecies=D->nSpecies;
     dPhi=D->numSlice*2*M_PI;
 
+    N=(int *)malloc(D->nSpecies*sizeof(int ));
+    LL=D->loadList;
+    s=0;
+    while(LL->next) {
+       N[s]=LL->numInBeamlet;
+       LL=LL->next;
+       s++;
+    }
+
     for(i=startI; i<endI; i++)
     {
-      for(s=0; s<nSpecies; s++) {
-        p=particle[i].head[s]->pt;
-        while(p)  {
-          theta=p->theta;
-//			 intThe=(int)(theta/dPhi);
-//          if(intThe>=1) { printf("In rearrange, intThe=%d,theta=%g,iteration=%d,dPhi=%g\n",intThe,theta,iteration,dPhi); }
-          if(theta>=dPhi)  {
-            intThe=(int)(theta/dPhi);
-//	         theta-=dPhi*intThe;
-	         theta-=dPhi;
-          } else if(theta<0) {              
-            intThe=(int)(theta/dPhi);
-//	         theta-=dPhi*(intThe-1);
-	         theta+=dPhi;
-          } else ;
+       for(s=0; s<nSpecies; s++) {
+          p=particle[i].head[s]->pt;
+          while(p)  {
+             calFlag=OFF;
+             aveTh=0.0;
+             for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
+             aveTh/=1.0*N[s];
 
-          if(theta>=dPhi || theta<0) { printf("In rearrange, theta=%g,iteration=%d,dPhi=%g\n",theta,iteration,dPhi);  }
-          p->theta=theta;    
+             if(aveTh>=dPhi)  {
+                intThe=(int)(aveTh/dPhi);
+                delTh=dPhi*intThe;
+                calFlag=ON;
+	             //theta-=dPhi;
+             } else if(aveTh<0) {              
+                intThe=(int)(aveTh/dPhi);
+                delTh=dPhi*(intThe-1);
+                calFlag=ON;
+	             //theta+=dPhi;
+             } else ;
 
-	       p=p->next;
-	     }
-      }
+             if(calFlag==ON) {
+                for(n=0; n<N[s]; n++) p->theta[n]-=delTh;    
+                aveTh-=delTh;
+             } else ;
+
+             if(aveTh>=dPhi || aveTh<0) { printf("In rearrange, intThe%d,delTh=%g,newAve=%g,iteration=%d,dPhi=%g\n",intThe,delTh,aveTh,iteration,dPhi);  }
+          
+	          p=p->next;
+	       }
+       }
     }		//End of for(i)
+
+    free(N);
 }
 

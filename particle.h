@@ -6,8 +6,8 @@ typedef struct _ptclHead  {
 }   ptclHead;
 
 typedef struct _ptclList  {
-    double x,y;
-    double theta,gamma,px,py; 
+    double *x,*y,*px,*py;
+    double *theta,*gamma; 
     double weight; 
     int index,core; 
     struct _ptclList *next;

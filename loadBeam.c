@@ -25,14 +25,14 @@ void loadBeam(Domain D,LoadList *LL,int s,int iteration)
 //    loadPolygonPlasma2D(D,LL,s,iteration); 
     break;
   case 3:
-    loadBeam3D(&D,LL,s,iteration);
+    //loadBeam3D(&D,LL,s,iteration);
     break;
   default:
     ;
   }
 }
 
-
+/*
 void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
 {
    int l,b,n,m,numInBeamlet,beamlets,noiseONOFF,flag1,flag2;
@@ -260,7 +260,7 @@ void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
 
 
 }
-
+*/
 
 void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
 {
@@ -345,10 +345,23 @@ void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
      sigma=sqrt(2.0/eNumbers);	//harmony is 1.
 
      for(b=0; b<beamlets; b++)  {
+       New = (ptclList *)malloc(sizeof(ptclList));
+       New->next = D->particle[i].head[s]->pt;
+       D->particle[i].head[s]->pt = New;
+
+       New->weight=remacro;
+       New->index=LL->index;  	//index
+       New->core=myrank;  	//index
+
+       New->x=(double *)malloc(numInBeamlet*sizeof(double ));
+       New->y=(double *)malloc(numInBeamlet*sizeof(double ));
+       New->px=(double *)malloc(numInBeamlet*sizeof(double ));
+       New->py=(double *)malloc(numInBeamlet*sizeof(double ));
+       New->theta=(double *)malloc(numInBeamlet*sizeof(double ));
+       New->gamma=(double *)malloc(numInBeamlet*sizeof(double ));
 
        gsl_qrng_get(q1,v1);
        th=v1[0];           gam=v1[1]; if(gam==0.0) gam=1e-4; else ;
-
        //th=randomValue(1.0);
        //v1[2]=randomValue(1.0);
   	    //gam=randomValue(1.0)+1e-4;
@@ -357,13 +370,13 @@ void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
        theta0=(th)*(dPhi-(numInBeamlet-1.0)/(numInBeamlet*1.0)*2*M_PI);
        //theta0=(th)*(2*M_PI-(numInBeamlet-1.0)/(numInBeamlet*1.0)*2*M_PI);
        //theta0=(th)*(dPhi);  
-
-       for(n=0; n<numInBeamlet; n++)  {		     
-         New = (ptclList *)malloc(sizeof(ptclList));
-         New->next = D->particle[i].head[s]->pt;
-         D->particle[i].head[s]->pt = New;
-
-         New->x = 0.0; New->y = 0.0;
+    
+       for(n=0; n<numInBeamlet; n++)  {
+       
+         New->x[n]=0.0;         New->y[n]=0.0;
+         New->px[n]=0.0;        New->py[n]=0.0;
+         New->gamma[n]=gam;		//gamma
+         
          theta=theta0+n*div;
          noise=0.0;
          for(m=1; m<=numInBeamlet/2; m++) {
@@ -378,16 +391,12 @@ void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
          if(tmp>=dPhi) tmp-=dPhi; 
          else if(tmp<0) tmp+=dPhi; 
          else ;
-         New->theta=tmp;
-
-         New->gamma=gam;		//gamma
-
-         New->px=0.0;      New->py=0.0;       	//py
-         New->weight=remacro;
-         New->index=LL->index;  	//index
-         New->core=myrank;  	//index
-         LL->index+=1;
+         New->theta[n]=tmp;
+       
        }  	// End for(n)
+
+       LL->index+=1;
+       
      }      // End for(b) 
    }			//End of for(i)
    gsl_qrng_free(q1);

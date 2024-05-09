@@ -8,8 +8,8 @@
 
 void saveTotalBFactor(Domain *D)
 {
-   int maxStep,step;
-	double dz,minZ,z;
+   int i,maxStep,step,start,h;
+	double dz,minZ,z,sumR,sumI,cnt,*sendData,*recvData;
    FILE *out;
    int myrank, nTasks;
    MPI_Status status; 
@@ -21,15 +21,47 @@ void saveTotalBFactor(Domain *D)
    dz=D->dz;
    minZ=D->minZ;
 
+   sendData=(double *)malloc(maxStep*3*sizeof(double ));
+   start=0;
+   for(step=0; step<maxStep; step++) {
+     for(h=0; h<3; h++)
+       sendData[start+h] = D->totalBunch[step][h];
+     start += 3;
+   }
+
+   recvData=(double *)malloc(maxStep*3*sizeof(double ));
+   for(i=1; i<nTasks; i++) {
+     if(myrank==i)  {
+       MPI_Send(sendData,maxStep*3,MPI_DOUBLE,0,myrank,MPI_COMM_WORLD);
+     }  else ;
+   }
    if(myrank==0) {
-      out=fopen("totalB","w");
-      for(step=0; step<maxStep; step++) {
-         z=step*dz+minZ;
-         fprintf(out,"%.15g %g",z,D->totalBunch[step]);
-      }
-      fclose(out);
-      printf("totalB is made.\n");
-	} else ;
+     for(i=1; i<nTasks; i++) {
+       MPI_Recv(recvData,maxStep*3,MPI_DOUBLE,i,i,MPI_COMM_WORLD,&status);
+       start=0;
+       for(step=0; step<maxStep; step++) {
+         for(h=0; h<3; h++)
+           D->totalBunch[step][h] += recvData[start+h];
+         start += 3;
+       }
+     }
+
+     out=fopen("totalBunch","w");
+     for(step=0; step<maxStep; step++) {
+       z=step*dz+minZ;
+       sumR=D->totalBunch[step][0];
+       sumI=D->totalBunch[step][1];
+       cnt=D->totalBunch[step][2];
+       fprintf(out,"%.15g %g\n",z,sqrt(sumR*sumR+sumI*sumI)/cnt);
+     }
+     fclose(out);
+     printf("totalBunch is made.\n");
+   } else ;
+
+   free(sendData);
+   free(recvData);
+
+   MPI_Barrier(MPI_COMM_WORLD);                  
 }
 
 
@@ -37,7 +69,7 @@ void saveTotalBFactor(Domain *D)
 
 void updateBFactor(Domain *D,int iteration)
 {
-   int i,j,s,startI,endI,minI,sliceI,sliceN,rank;
+   int n,i,j,s,startI,endI,minI,sliceI,sliceN,rank,*N;
 	double bucketZ,z,theta,send[3],recv[3],cnt;
 	double complex sum;
    LoadList *LL;
@@ -52,8 +84,22 @@ void updateBFactor(Domain *D,int iteration)
 
    startI=1;  endI=D->subSliceN+1;
 	minI=D->minI;
-
 	sliceN=D->sliceN;
+
+   LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      LL=LL->next;
+      s++;
+   }
+   N=(int *)malloc(s*sizeof(int ));
+   LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      N[s]=LL->numInBeamlet;
+      LL=LL->next;
+      s++;
+   }
 
    sum=0.0+I*0.0;
 	cnt=0.0;
@@ -62,13 +108,19 @@ void updateBFactor(Domain *D,int iteration)
      for(s=0; s<D->nSpecies; s++)  {
        p=D->particle[i].head[s]->pt;
        while(p) {
-         theta=p->theta;
-			sum+=cexp(I*theta);
-			cnt+=1.0;
+         for(n=0; n<N[s]; n++) {
+			  sum+=cexp(I*p->theta[n]);
+			  cnt+=1.0;
+         }
 			p=p->next;
 		 }
 	  }
 	}
+   D->totalBunch[iteration][0]=creal(sum);
+   D->totalBunch[iteration][1]=cimag(sum);
+   D->totalBunch[iteration][2]=cnt;
+
+   /*
    send[0]=creal(sum);
    send[1]=cimag(sum);
    send[2]=cnt;
@@ -91,7 +143,8 @@ void updateBFactor(Domain *D,int iteration)
    }
 
    D->totalBunch[iteration]=cabs(sum)/cnt;
-
+   */
+   free(N);
 }
 
 

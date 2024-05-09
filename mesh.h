@@ -52,8 +52,7 @@ typedef struct _Domain
    double dz,shift; 
    double complex ***U,***Uc,****Ez,***ScU,***ScEz,***slope;
    double complex **Ma,**invMa,**Mb,**invMb;
-   double **totalEnergy;
-	double *totalBunch;
+   double **totalEnergy,**totalBunch;
    int currentFlag,shiftFlag,driftFlag;
 
    //Electron beam
