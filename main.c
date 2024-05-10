@@ -103,37 +103,37 @@ int main(int argc, char *argv[])
 
       
 //printf("myrank=%d,iteration=%d, before solveField is done\n",myrank,iteration);
-      //if(D.driftFlag==OFF)  solveField(D,iteration); else ;
+      if(D.driftFlag==OFF)  solveField(D,iteration); else ;
 //printf("myrank=%d,iteration=%d, solveField is done\n",myrank,iteration);
 
 		//Chicane
-      //chicane_test(&D,iteration);
-      //if(D.chicaneFlag==ON) {
-      // 	if(D.calChicaneFlag==ON) {
-		//	   calParticleDelay(&D,iteration);
-       	   //if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
+      chicane_test(&D,iteration);
+      if(D.chicaneFlag==ON) {
+       	if(D.calChicaneFlag==ON) {
+			   calParticleDelay(&D,iteration);
+       	   if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
    
-       //     if(D.chi_SSON==ON) {
+            if(D.chi_SSON==ON) {
          //     seed_Field_test(&D);
 		   //	  selfSeed_Field(&D);
          //	  if(myrank==0) printf("self-seeding is performed. at step=%d\n",iteration); 
-       //     } else {
+            } else {
        //	     shiftChicaneField(&D);
-		//	     if(myrank==0) printf("Chicane is performed. at step=%d\n",iteration); else ;
-		 //     }
-		//	} else ;
+			     if(myrank==0) printf("Chicane is performed. at step=%d\n",iteration); else ;
+		      }
+			} else ;
       	
 			//transversePush(&D,iteration);
-      //} else {
+      } else {
 			
-		//	set_chicane_zero(&D);		
+			set_chicane_zero(&D);		
 
 		//	if(D.driftFlag==OFF && D.mode==Time_Dependent)
 		//	  shiftField(D,iteration);
 		//	else ;
 //printf("myrank=%d,iteration=%d, shiftField is done\n",myrank,iteration);
 
-      //	updateK_quadG(&D,iteration,0);
+      	updateK_quadG(&D,iteration,0);
 //printf("myrank=%d,iteration=%d, 1st updateK is done\n",myrank,iteration);
 
       	// twiss parameters
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
       	//transversePush(&D,iteration);
 //printf("myrank=%d,iteration=%d, 1st transversePush is done\n",myrank,iteration);
 
-      //	updateK_quadG(&D,iteration,0.5);
+      	updateK_quadG(&D,iteration,0.5);
 //printf("myrank=%d,iteration=%d, 2st updateK is done\n",myrank,iteration);
 
 			if(D.driftFlag==OFF) push_theta_gamma(&D,iteration); 
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 
 //         rearrangeParticles(&D,iteration);
 
-	//	}	//End of chicaneFlag==OFF
+		}	//End of chicaneFlag==OFF
 
       
 

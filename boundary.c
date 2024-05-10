@@ -4,6 +4,7 @@
 #include "constants.h"
 #include <mpi.h>
 #include <complex.h>
+#include <math.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_linalg.h>

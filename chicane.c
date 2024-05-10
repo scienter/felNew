@@ -7,16 +7,12 @@
 
 void calParticleDelay(Domain *D,int iteration)
 {
-   double B0,ld,L1,L2,vz,gamma0,ldbyR,th0,numSlice;
-   double dz1,dz2,dz3,shiftZ0,dXi,dPhi,ks;
-   int sliceI,startI,endI,s,nSpecies,subSliceN;
-   double gamma,invGam,shiftZ;
+	double B0,ld,L1,L2,vz,gamma0,ldbyR,th0,numSlice;
+	double dz1,dz2,dz3,shiftZ0,dPhi;
+	int sliceI,startI,endI,s,nSpecies,subSliceN,n,*N;
+	double gamma,invGam,shiftZ,ks;
+   LoadList *LL;
    ptclList *p;
-   int myrank, nTasks;
-
-   MPI_Status status;
-   MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
-   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
    ks=D->ks;
 	B0=D->dipoleB;
@@ -24,21 +20,30 @@ void calParticleDelay(Domain *D,int iteration)
 	L1=D->L1;
 	L2=D->L2;
    gamma0=D->gamma0;
-   vz=velocityC*sqrt(1.0-1.0/gamma0/gamma0);
-   dXi=D->numSlice*D->lambda0;
-   dPhi=D->numSlice*2*M_PI;
+	vz=velocityC*sqrt(1.0-1.0/gamma0/gamma0);
+	numSlice=D->numSlice;
+	dPhi=D->numSlice*2*M_PI;
 
-   ldbyR=eCharge*ld*B0/gamma0/eMass/vz;
-   th0=atan(ldbyR+0.5*ldbyR*ldbyR*ldbyR);
+	ldbyR=eCharge*ld*B0/gamma0/eMass/vz;
+	th0=atan(ldbyR+0.5*ldbyR*ldbyR*ldbyR);
    dz1=gamma0*eMass*vz/eCharge/B0*th0-ld;
 	dz2=(L1-ld)*(1.0/cos(th0)-1.0);
 	dz3=(L2-ld)*(1.0-vz/velocityC);
-	
 	shiftZ0=(4.0*dz1+2.0*dz2+dz3);
-   D->shiftSlice=(int)(shiftZ0/dXi);
 
+	D->shiftSlice=(int)(shiftZ0);
+   
    startI=1;  endI=D->subSliceN+1;
 	subSliceN=D->subSliceN;
+
+   N=(int *)malloc(D->nSpecies*sizeof(int ));
+   LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      N[s]=LL->numInBeamlet;
+      LL=LL->next;
+      s++;
+   }
 
 	nSpecies=D->nSpecies;
    for(sliceI=startI; sliceI<endI; sliceI++)
@@ -46,18 +51,24 @@ void calParticleDelay(Domain *D,int iteration)
      for(s=0; s<nSpecies; s++)  {
        p=D->particle[sliceI].head[s]->pt;
        while(p) {
-         gamma=p->gamma;  invGam=1.0/gamma;
+		   for(n=0; n<N[s]; n++) {
+           gamma=p->gamma[n];  invGam=1.0/gamma;
 
-			vz=velocityC*sqrt(1.0-invGam*invGam);
-			ldbyR=eCharge*ld*B0*invGam/eMass/vz;
-			th0=atan(ldbyR+0.5*ldbyR*ldbyR*ldbyR);
-			dz1=gamma*eMass*vz/eCharge/B0*th0-ld;
-			dz2=(L1-ld)*(1.0/cos(th0)-1.0);
-			dz3=(L2-ld)*(1.0-vz/velocityC);
-			shiftZ=(4.0*dz1+2.0*dz2+dz3);
+	        vz=velocityC*sqrt(1.0-invGam*invGam);
+	        ldbyR=eCharge*ld*B0*invGam/eMass/vz;
+	        th0=atan(ldbyR+0.5*ldbyR*ldbyR*ldbyR);
+           dz1=gamma*eMass*vz/eCharge/B0*th0-ld;
+           dz2=(L1-ld)*(1.0/cos(th0)-1.0);
+           dz3=(L2-ld)*(1.0-vz/velocityC);
+           shiftZ=4.0*dz1+2.0*dz2+dz3;
+	      
+           p->theta[n]+=(shiftZ0-shiftZ)*ks;
 
-			p->theta-=(shiftZ-shiftZ0)*ks;
-
+			  if(fabs((shiftZ-shiftZ0)*ks/numSlice)>=subSliceN) {
+			    printf("shiftSlice=%g, subSliceN=%d it is too much.\n",shiftZ-shiftZ0,subSliceN);
+				 exit(0);
+			  }  else ;
+         }
          p=p->next;
        }
      }		//End of for(s)
@@ -69,11 +80,12 @@ void rearrangeChicaneParticle(Domain *D)
     Particle *particle;
     particle=D->particle;
 
-    int i,s,n,ii,nn,intZ,cnt,deleteFlag,shiftFlag,dataCnt=11;
-    int startI,endI,nSpecies,minI,maxI,indexI;
-    double dPhi,theta;
+    int i,s,ii,intZ,cnt,deleteFlag,shiftFlag,dataCnt;
+    int l,rank,startI,endI,nSpecies,minI,maxI,indexI,n,*N;
+    double dPhi,theta,aveTh,delTh;
 	 int *sendN,*recvN,*start,*cntN;
 	 double **sendData,**recvData;
+    LoadList *LL;	 
     ptclList *p,*New,*prev,*tmp;
     int myrank, nTasks;
 
@@ -88,267 +100,229 @@ void rearrangeChicaneParticle(Domain *D)
 
     sendN=(int *)malloc(nTasks*sizeof(int ));
     recvN=(int *)malloc(nTasks*sizeof(int ));
-    for(i=0; i<nTasks; i++) { sendN[i]=0; recvN[i]=0; }
 
-    for(i=startI; i<endI; i++)   {
-  	   for(s=0; s<nSpecies; s++) {
-     	  p=particle[i].head[s]->pt;
-        while(p)  {
-  	       theta=p->theta;
-     	    if(theta>=dPhi)  intZ=(int)(theta/dPhi);
-        	 else if(theta<0) intZ=((int)(theta/dPhi))-1;
-          else             intZ=0;
+    N=(int *)malloc(D->nSpecies*sizeof(int ));
+    LL=D->loadList;
+    s=0;
+    while(LL->next) {
+       N[s]=LL->numInBeamlet;
+       LL=LL->next;
+       s++;
+    }
+
+    for(s=0; s<nSpecies; s++) 
+	 {
+       dataCnt=6*N[s]+4;
+       for(i=0; i<nTasks; i++) { sendN[i]=0; recvN[i]=0; }
+
+	    for(i=startI; i<endI; i++)   {
+          p=particle[i].head[s]->pt;
+	       while(p)  {
+			    aveTh=0.0;
+			    for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
+				 aveTh/=1.0*N[s];
+
+      	    if(aveTh>=dPhi)  intZ=(int)(aveTh/dPhi);
+         	 else if(aveTh<0) intZ=((int)(aveTh/dPhi))-1;
+	          else             intZ=0;
  
-  	       indexI=i-startI+minI+intZ;
-     	    for(n=0; n<nTasks; n++) {
-        	   if(D->minmax[n]<=indexI && indexI<D->minmax[n+1]) {
-				  if(n!=myrank)  sendN[n]+=1; else ;
-				  n=nTasks;
-				} else ;
-			 }
-			 p=p->next;
-        }	//End of while(p)
-  	   }		//End of for(s)
-    }		//End of for(i)
+   	       indexI=i-startI+minI+intZ;
+      	    for(rank=0; rank<nTasks; rank++) {
+         	   if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
+					  if(rank!=myrank)  sendN[rank]+=1; else ;
+					  rank=nTasks;
+					} else ;
+				 }
+			    p=p->next;
+	       }	//End of while(p)
+       }		//End of for(s)
 
-    for(n=0; n<nTasks; n++)   {
-      if(myrank!=n)
-        MPI_Send(&sendN[n],1,MPI_INT,n,myrank,MPI_COMM_WORLD);
-	 }
-	 for(n=0; n<nTasks; n++)   {
-	   if(myrank!=n)    {
-	     MPI_Recv(&recvN[n],1,MPI_INT,n,n,MPI_COMM_WORLD,&status);
-	   }  else ;
-	 }
-	 MPI_Barrier(MPI_COMM_WORLD);
-	 
+       for(rank=0; rank<nTasks; rank++)  
+		    printf("myrank=%d sendN[%d]=%d, ",myrank,rank,sendN[rank]);
+		 printf("\n");
 
-    recvData=(double **)malloc(nTasks*sizeof(double *));
-    sendData=(double **)malloc(nTasks*sizeof(double *));
-    for(n=0; n<nTasks; n++)   {
-      sendData[n]=(double *)malloc(sendN[n]*dataCnt*sizeof(double ));
-      recvData[n]=(double *)malloc(recvN[n]*dataCnt*sizeof(double ));
-    }
+       for(rank=0; rank<nTasks; rank++)   {
+          if(myrank!=rank)
+             MPI_Send(&sendN[rank],1,MPI_INT,rank,myrank,MPI_COMM_WORLD);
+	    }
+	    for(rank=0; rank<nTasks; rank++)   {
+	       if(myrank!=rank)    {
+	          MPI_Recv(&recvN[rank],1,MPI_INT,rank,rank,MPI_COMM_WORLD,&status);
+	       }  else ;
+	    }
+	    MPI_Barrier(MPI_COMM_WORLD);
 
-    cntN=(int *)malloc(nTasks*sizeof(int ));
-    for(n=0; n<nTasks; n++) cntN[n]=0; 
-    for(i=startI; i<endI; i++)
-    {
-      for(s=0; s<nSpecies; s++) {
-        cnt=1;
-        p=particle[i].head[s]->pt;
-        while(p)  {
-          if(cnt==1)  prev=p; else ;
+       for(rank=0; rank<nTasks; rank++)  
+		    printf("myrank=%d recvN[%d]=%d, ",myrank,rank,recvN[rank]);
+		 printf("\n");
+ 
+       recvData=(double **)malloc(nTasks*sizeof(double *));
+       sendData=(double **)malloc(nTasks*sizeof(double *));
+       for(rank=0; rank<nTasks; rank++)   {
+          sendData[rank]=(double *)malloc(sendN[rank]*dataCnt*sizeof(double ));
+          recvData[rank]=(double *)malloc(recvN[rank]*dataCnt*sizeof(double ));
+       }
+       
+       cntN=(int *)malloc(nTasks*sizeof(int ));
+       for(rank=0; rank<nTasks; rank++) cntN[rank]=0; 
+       for(i=startI; i<endI; i++)
+       {
+          cnt=1;
+          p=particle[i].head[s]->pt;
+          while(p)  {
+             if(cnt==1)  prev=p; else ;
               
-			 deleteFlag=0;
-			 shiftFlag=0;
-          theta=p->theta;
-          if(theta>=dPhi)  {
-            intZ=(int)(theta/dPhi);
-            theta-=dPhi*intZ;
-				shiftFlag=1;	
+			    deleteFlag=OFF;
+			    shiftFlag=OFF;
+
+			    aveTh=0.0;
+			    for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
+			    aveTh/=1.0*N[s];
+             if(aveTh>=dPhi)  {
+                intZ=(int)(aveTh/dPhi);
+                delTh=dPhi*intZ;
+                //theta-=dPhi*intZ;
+				    shiftFlag=ON;	
+             }
+             else if(aveTh<0) {              
+                intZ=((int)(aveTh/dPhi))-1;
+                delTh=dPhi*intZ;
+                //theta+=-1.0*dPhi*intZ;
+				    shiftFlag=ON;	
+             } 
+             else   intZ=0;
+
+			    if(D->mode==Static) intZ=0; else ;
+
+             indexI=i-startI+minI+intZ;
+			    if(indexI<0 || indexI>D->sliceN) deleteFlag=ON; else ;
+
+             for(rank=0; rank<nTasks; rank++) {
+                if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
+				       if(myrank!=rank) {
+				          for(n=0; n<N[s]; n++) {
+                         sendData[rank][cntN[rank]*dataCnt+n*6+0]=p->theta[n]-delTh;
+                         sendData[rank][cntN[rank]*dataCnt+n*6+1]=p->x[n];
+                         sendData[rank][cntN[rank]*dataCnt+n*6+2]=p->y[n];
+                         sendData[rank][cntN[rank]*dataCnt+n*6+3]=p->gamma[n];
+                         sendData[rank][cntN[rank]*dataCnt+n*6+4]=p->px[n];
+                         sendData[rank][cntN[rank]*dataCnt+n*6+5]=p->py[n];
+				          }
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+0]=p->weight;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+1]=p->index;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+2]=p->core;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+3]=indexI;
+                      cntN[rank]+=1;
+					       deleteFlag=ON;
+				       } else ;
+				       rank=nTasks;
+				    } else ; 
+			    }		//End of for(n<nTasks)
+               
+			    if(deleteFlag==ON && shiftFlag==OFF) {
+                if(cnt==1)  {
+                   particle[i].head[s]->pt = p->next;
+				       free(p->x);      free(p->y);
+				       free(p->px);     free(p->py);
+				       free(p->theta);  free(p->gamma);
+                   p->next = NULL;
+		             free(p);
+                   p=particle[i].head[s]->pt;
+                   cnt=1;
+   	          } else {
+                   prev->next = p->next;
+				       free(p->x);      free(p->y);
+				       free(p->px);     free(p->py);
+				       free(p->theta);  free(p->gamma);
+				       p->next = NULL;
+				       free(p);
+	                p=prev->next;
+				    }
+			    } else if(deleteFlag==OFF && shiftFlag==ON) {
+                if(cnt==1)  {
+					    for(n=0; n<N[s]; n++) p->theta[n]-=delTh;
+                   particle[i].head[s]->pt = p->next;
+	                p->next = particle[i+intZ].head[s]->pt;
+	                particle[i+intZ].head[s]->pt = p;
+	                p=particle[i].head[s]->pt;
+	                cnt=1;
+	             } else {
+	                prev->next = p->next;
+					    for(n=0; n<N[s]; n++) p->theta[n]-=delTh;
+	                p->next = particle[i+intZ].head[s]->pt;
+	                particle[i+intZ].head[s]->pt = p;
+	                p=prev->next;
+	             }
+			    } else {
+			       prev=p;
+			       p=p->next;
+			       cnt++;
+			    }	
+
+          }	//End of while(p)
+       }		//End of for(i)
+       
+       // shifting particles
+       for(rank=0; rank<nTasks; rank++)  {
+          if(myrank==rank)  {
+             for(l=0; l<nTasks; l++) {
+                if(rank!=l)
+                   MPI_Send(sendData[l],sendN[l]*dataCnt,MPI_DOUBLE,l,myrank,MPI_COMM_WORLD);
+                else ;
+             }
           }
-          else if(theta<0) {              
-            intZ=((int)(theta/dPhi))-1;
-            theta+=-1.0*dPhi*intZ;
-				shiftFlag=1;	
-          } 
-          else   intZ=0;
+          else  
+			 {
+             MPI_Recv(recvData[rank],recvN[rank]*dataCnt,MPI_DOUBLE,rank,rank,MPI_COMM_WORLD,&status);
+				  
+             for(ii=0; ii<recvN[rank]; ii++)  {
+                indexI=recvData[rank][ii*dataCnt+N[s]*6+3];
+                i=indexI-minI+startI;          
+                New = (ptclList *)malloc(sizeof(ptclList));
 
-          indexI=i-startI+minI+intZ;
-			 if(indexI<minI || indexI>=maxI) shiftFlag=0; else ;
-			 if(myrank==0 && indexI<minI) deleteFlag=1; else ;
-			 if(myrank==nTasks-1 && indexI>=maxI) deleteFlag=1; else ;
+					 for(n=0; n<N[s]; n++) {
+                  New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
+                  New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
+                  New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
+                  New->gamma[n]=recvData[rank][ii*dataCnt+n*6+3];
+                  New->px[n]=recvData[rank][ii*dataCnt+n*6+4];
+                  New->py[n]=recvData[rank][ii*dataCnt+n*6+5];
+					 }
+                //New->next = particle[i].head[s]->pt;
+                //particle[i].head[s]->pt = New;
+					 //for(n=0; n<N[s]; n++) {
+                //   New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
+                //   New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
+                //   New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
+                //   New->gamma[n]=recvData[rank][ii*dataCnt+n*6+3];
+                //   New->px[n]=recvData[rank][ii*dataCnt+n*6+4];
+                //   New->py[n]=recvData[rank][ii*dataCnt+n*6+5];
+					 //}
+					 
+                //New->weight=recvData[rank][ii*dataCnt+N[s]*6+0];
+                //New->index=recvData[rank][ii*dataCnt+N[s]*6+1];
+                //New->core=recvData[rank][ii*dataCnt+N[s]*6+2];
+					 
+             }
+			    	 
+          }
+		    MPI_Barrier(MPI_COMM_WORLD);  
+       }
+       
+       for(rank=0; rank<nTasks; rank++) {
+          free(sendData[rank]);
+          free(recvData[rank]);
+       }
+       free(sendData);
+       free(recvData);
+	    free(cntN);
 
-          for(n=0; n<nTasks; n++) {
-            if(D->minmax[n]<=indexI && indexI<D->minmax[n+1]) {
-				  if(myrank!=n) {
-                sendData[n][cntN[n]*dataCnt+0]=theta;
-                sendData[n][cntN[n]*dataCnt+1]=p->x;
-                sendData[n][cntN[n]*dataCnt+2]=p->y;
-                sendData[n][cntN[n]*dataCnt+3]=p->gamma;
-                sendData[n][cntN[n]*dataCnt+4]=p->px;
-                sendData[n][cntN[n]*dataCnt+5]=p->py;
-                sendData[n][cntN[n]*dataCnt+6]=p->weight;
-                sendData[n][cntN[n]*dataCnt+7]=p->index;
-                sendData[n][cntN[n]*dataCnt+8]=p->core;
-                sendData[n][cntN[n]*dataCnt+9]=s;
-                sendData[n][cntN[n]*dataCnt+10]=indexI;
-
-                cntN[n]+=1;
-					 deleteFlag=1;
-				  } else ;
-				  n=nTasks;
-				} else ; 
-			 }		//End of for(n<nTasks)
-
-			 if(deleteFlag==1 && shiftFlag==0) {
-            if(cnt==1)  {
-              particle[i].head[s]->pt = p->next;
-              p->next = NULL;
-		        free(p);
-              p=particle[i].head[s]->pt;
-              cnt=1;
-   	      } else {
-              prev->next = p->next;
-				  p->next = NULL;
-				  free(p);
-	           p=prev->next;
-				}
-			 } else if(deleteFlag==0 && shiftFlag==1) {
-            if(cnt==1)  {
-              p->theta=theta;
-              particle[i].head[s]->pt = p->next;
-	           p->next = particle[i+intZ].head[s]->pt;
-	           particle[i+intZ].head[s]->pt = p;
-	           p=particle[i].head[s]->pt;
-	           cnt=1;
-	         } else {
-	           prev->next = p->next;
-	           p->theta=theta;
-	           p->next = particle[i+intZ].head[s]->pt;
-	           particle[i+intZ].head[s]->pt = p;
-	           p=prev->next;
-	         }
-			 } else {
-			   prev=p;
-			   p=p->next;
-			   cnt++;
-			 }				 
-        }	//End of while(p)
-      }		//End of for(s)
-	 }			//End of for(i)
-
-
-    for(n=0; n<nTasks; n++)  {
-      if(myrank==n)  {
-        for(nn=0; nn<nTasks; nn++) {
-          if(n!=nn)
-             MPI_Send(sendData[nn],sendN[nn]*dataCnt,MPI_DOUBLE,nn,myrank,MPI_COMM_WORLD);
-          else ;
-        }
-      }
-      else  {
-        MPI_Recv(recvData[n],recvN[n]*dataCnt,MPI_DOUBLE,n,n,MPI_COMM_WORLD,&status);
-        for(ii=0; ii<recvN[n]; ii++)  {
-          indexI=recvData[n][ii*dataCnt+10];
-          i=indexI-minI+startI;
-          s=recvData[n][ii*dataCnt+9];
-
-          New = (ptclList *)malloc(sizeof(ptclList));
-          New->next = particle[i].head[s]->pt;
-          particle[i].head[s]->pt = New;
-          New->theta=recvData[n][ii*dataCnt+0];
-          New->x=recvData[n][ii*dataCnt+1];
-          New->y=recvData[n][ii*dataCnt+2];
-          New->gamma=recvData[n][ii*dataCnt+3];
-          New->px=recvData[n][ii*dataCnt+4];
-          New->py=recvData[n][ii*dataCnt+5];
-          New->weight=recvData[n][ii*dataCnt+6];
-          New->index=recvData[n][ii*dataCnt+7];
-          New->core=recvData[n][ii*dataCnt+8];
-        }
-      }
-		MPI_Barrier(MPI_COMM_WORLD);  
-    }
-
-/*
-    for(i=startI; i<endI; i++)
-    {
-      for(s=0; s<nSpecies; s++) {
-        p=particle[i].head[s]->pt;
-        while(p)  {
-			  theta=p->theta;
-			  if(theta<0 || theta>=dPhi) printf("myrank=%d,i=%d, theta=%g\n",myrank,i,theta); 
-			  p=p->next;
-		  }		
-		}
-	 }
-*/
-
-    for(n=0; n<nTasks; n++) {
-      free(sendData[n]);
-      free(recvData[n]);
-    }
-    free(sendData);
-    free(recvData);
+    }  //End of for(s)
 	 free(sendN);
 	 free(recvN);
-	 free(cntN);
-
-
+	 free(N);
 }
 
-/*
-void rearrangeChicaneParticle(Domain *D)
-{
-    Particle *particle;
-    particle=D->particle;
-
-    int i,s,intZ,cnt,deleteFlag=0;
-    int startI,endI,nSpecies,targetI;
-    double dPhi,theta;
-    ptclList *p,*New,*prev,*tmp;
-
-    startI=1;  endI=D->subSliceN+1;
-    nSpecies=D->nSpecies;
-    dPhi=D->numSlice*2*M_PI;
-
-    for(i=startI; i<endI; i++)
-    {
-      for(s=0; s<nSpecies; s++) {
-        cnt=1;
-        p=particle[i].head[s]->pt;
-        while(p)  {
-          if(cnt==1)
-            prev=p;
-          deleteFlag=0;
-              
-          theta=p->theta;
-          if(theta>=dPhi)  {
-            intZ=(int)(theta/dPhi);
-            theta-=dPhi*intZ;
-            deleteFlag=1;
-          }
-          else if(theta<0) {              
-            intZ=((int)(theta/dPhi))-1;
-            theta+=-1.0*dPhi*intZ;
-            deleteFlag=1;
-          } 
-          else   intZ=0;
-
-          if(deleteFlag==1)  {
-            if(cnt==1)  {
-				  if(i+intZ>endI)   { targetI=endI; theta+=dPhi*(i+intZ-endI); }
-				  else if(i+intZ<0) { targetI=0;    theta+=dPhi*(i+intZ); }
-				  else              { targetI=i+intZ; }
-              p->theta=theta;    
-              particle[i].head[s]->pt = p->next;
-              p->next = particle[targetI].head[s]->pt;
-              particle[targetI].head[s]->pt = p;
-              p=particle[i].head[s]->pt;
-              cnt=1;
-            } else {
-				  if(i+intZ>endI)   { targetI=endI; theta+=dPhi*(i+intZ-endI); }
-				  else if(i+intZ<0) { targetI=0;    theta+=dPhi*(i+intZ); }
-				  else              { targetI=i+intZ; }
-              prev->next = p->next;
-              p->theta=theta;    
-              p->next = particle[targetI].head[s]->pt;
-              particle[targetI].head[s]->pt = p;
-              p=prev->next;
-            }
-          }		//End of if(deleteFlag==1)
-          else {
-            prev=p;
-            p=p->next;
-            cnt++;
-          }              
-        }	//End of while(p)
-      }		//End of for(s)
-    }		//End of for(i)
-}
-*/
 
 void shiftChicaneField(Domain *D)
 {
@@ -474,6 +448,7 @@ void shiftChicaneField(Domain *D)
 	  free(sendData);
 	  free(recvData);
 	  free(start);
+	  
 	}
 
    free(sendN);   
@@ -487,8 +462,8 @@ void chicane_test(Domain *D,int iteration)
 	double z0,z1,x0,x1;
    ChiList *Chi;
 
-   z0=(iteration-0.0)*D->dz;
-   z1=(iteration+1.0)*D->dz;
+   z0=(iteration-1.0)*D->dz;
+   z1=iteration*D->dz;
 
    D->chicaneFlag=OFF;
    D->calChicaneFlag=OFF;
@@ -497,23 +472,16 @@ void chicane_test(Domain *D,int iteration)
    while(Chi->next) {
      x0=Chi->chiStart;
      x1=Chi->chiEnd;
-	  if(x0<=z0 && z0<x1) {
+
+     if(z0<=x1 && x1<z1) {
        D->chicaneFlag=ON;
-
-       if(z0<=x1 && x1<z1) {
-         D->calChicaneFlag=ON;
-	      D->dipoleB=Chi->B0;
-	 	   D->ld=Chi->ld;
-		   D->L1=Chi->L1;
-		   D->L2=Chi->L2;
-
-		   D->chi_delay=Chi->delay;
-		   D->chi_SSON=Chi->selfSeedON;
-		   D->chi_d=Chi->d;
-         D->bragTh=Chi->bragTh;
-		   D->extincL=Chi->extincL;
-		   D->chi0=Chi->chi0;
-	    } else ;
+       D->calChicaneFlag=ON;
+		 D->dipoleB=Chi->B0;
+		 D->ld=Chi->ld;
+		 D->L1=Chi->L1;
+		 D->L2=Chi->L2;
+	  } else if(x0<=z1 && z1<x1) {
+       D->chicaneFlag=ON;
 	  } else ;
      Chi=Chi->next; 
    }
@@ -527,10 +495,4 @@ void set_chicane_zero(Domain *D)
   D->L1=0.0;
   D->L2=0.0;
   D->shiftSlice=0;
-  D->chi_delay=0.0;
-  D->chi_SSON=OFF;
-  D->chi_d=0;
-  D->bragTh=0;
-  D->extincL=0;
-  D->chi0=0;
 }

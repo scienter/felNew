@@ -35,8 +35,8 @@ void solveField(Domain D,int iteration)
     solve_Field_U_1D(&D,iteration);
     break;
   case 3:
-    solve_Sc_3D(&D,iteration);
-    solve_Field_U_3D(&D,iteration);
+    //solve_Sc_3D(&D,iteration);
+    //solve_Field_U_3D(&D,iteration);
     break;
 
   default:
@@ -44,6 +44,7 @@ void solveField(Domain D,int iteration)
   }
 }
 
+/*
 void solve_Field_U_3D(Domain *D,int iteration)
 {
    int h,H,numHarmony,i,j,sliceI,startI,endI,ii;  
@@ -194,137 +195,8 @@ void solve_Field_U_3D(Domain *D,int iteration)
 
 	
 }
-   /*
-   for(h=0; h<numHarmony; h++)  {
-	  H = D->harmony[h];
-     for(sliceI=startI; sliceI<endI; sliceI++) {
-//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
-       for(j=1; j<ny-1; j++) {
-         for(i=0; i<nx; i++)
-           dd[i]=-beta*D->U[h][sliceI][(j+1)*nx+i]+(1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-	 DD[0]=dd[0]/(1.0-2*alpha);
-         for(i=1; i<nx; i++) {
-           CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
-           DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
-	 }
-	 i=nx-1;
-	 later=DD[i];
-	 D->Uc[h][sliceI][j*nx+i]=later;
-	 for(i=nx-2; i>=0; i--) {
-	   later=DD[i]-CC[i]*later;
-	   D->Uc[h][sliceI][j*nx+i]=later;
-	 }
-       }
-       j=0;
-         for(i=0; i<nx; i++) {
-           dd[i]=-beta*D->U[h][sliceI][(j+1)*nx+i]+(1+2*beta)*D->U[h][sliceI][j*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-//           dd[i]=D->tmpU[j*nx+i]+D->ScU[h][sliceI][j*nx+i];
-	 }
-	 DD[0]=dd[0]/(1.0-2*alpha);
-         for(i=1; i<nx; i++) {
-           CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
-           DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
-	 }
-	 i=nx-1;
-	 later=DD[i];
-	 D->Uc[h][sliceI][j*nx+i]=later;
-	 for(i=nx-2; i>=0; i--) {
-	   later=DD[i]-CC[i]*later;
-	   D->Uc[h][sliceI][j*nx+i]=later;
-	 }
-       j=ny-1;
-         for(i=0; i<nx; i++) {
-           dd[i]=(1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-//           dd[i]=D->tmpU[j*nx+i]+D->ScU[h][sliceI][j*nx+i];
-         }
-	 DD[0]=dd[0]/(1.0-2*alpha);
-         for(i=1; i<nx; i++) {
-           CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
-           DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
-	 }
-	 i=nx-1;
-	 later=DD[i];
-	 D->Uc[h][sliceI][j*nx+i]=later;
-	 for(i=nx-2; i>=0; i--) {
-	   later=DD[i]-CC[i]*later;
-	   D->Uc[h][sliceI][j*nx+i]=later;
-	 }
-     }
-   }
-   free(CC); 
-   free(DD);
-   free(dd);
-
-   // second step
-   CC=(double complex *)malloc(ny*sizeof(double complex));
-   DD=(double complex *)malloc(ny*sizeof(double complex));
-   dd=(double complex *)malloc(ny*sizeof(double complex));
-
-   for(h=0; h<numHarmony; h++)  {
-	  H = D->harmony[h];
-     alpha=-I*dz*0.25/(ks)/dx/dx;
-     beta=-I*dz*0.25/(ks)/dy/dy;
-     CC[0]=beta/(1-2*beta);
-     for(sliceI=startI; sliceI<endI; sliceI++) {
-//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
-       for(i=1; i<nx-1; i++) {
-         for(j=0; j<ny; j++) 
-           dd[j]=-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-	 DD[0]=dd[0]/(1-2*beta);
-         for(j=1; j<ny; j++) {
-           CC[j]=beta/(1-2*beta-beta*CC[j-1]);
-           DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
-	 }
-	 j=ny-1;
-	 later=DD[j];
-	 D->U[h][sliceI][j*nx+i]=later;
-	 for(j=ny-2; j>=0; j--) {
-	   later=DD[j]-CC[j]*later;
-	   D->U[h][sliceI][j*nx+i]=later;
-	 }
-       }
-       i=0;
-         for(j=0; j<ny; j++) {
-           dd[j]=-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-//           dd[j]=D->tmpU[j*nx+i]+D->ScU[h][sliceI][j*nx+i];
-	 }
-	 DD[0]=dd[0]/(1-2*beta);
-         for(j=1; j<ny; j++) {
-           CC[j]=beta/(1-2*beta-beta*CC[j-1]);
-           DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
-	 }
-	 j=ny-1;
-	 later=DD[j];
-	 D->U[h][sliceI][j*nx+i]=later;
-	 for(j=ny-2; j>=0; j--) {
-	   later=DD[j]-CC[j]*later;
-	   D->U[h][sliceI][j*nx+i]=later;
-	 }
-       i=nx-1;
-         for(j=0; j<ny; j++) {
-           dd[j]=(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
-//           dd[j]=D->tmpU[j*nx+i]+D->ScU[h][sliceI][j*nx+i];
-	 }
-	 DD[0]=dd[0]/(1-2*beta);
-         for(j=1; j<ny; j++) {
-           CC[j]=beta/(1-2*beta-beta*CC[j-1]);
-           DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
-	 }
-	 j=ny-1;
-	 later=DD[j];
-	 D->U[h][sliceI][j*nx+i]=later;
-	 for(j=ny-2; j>=0; j--) {
-	   later=DD[j]-CC[j]*later;
-	   D->U[h][sliceI][j*nx+i]=later;
-	 }
-     }
-   }
-   free(CC); 
-   free(DD);
-   free(dd);
-   */
-
-
+*/
+/*
 void solve_Sc_3D(Domain *D,int iteration)
 {
    int sliceI,i,j,ii,jj,s,h,H,numHarmony,order,nx,ny,N;  
@@ -541,7 +413,7 @@ void solve_Sc_3D(Domain *D,int iteration)
    }   //End of if(SCONOFF==ON)
    
 }
-
+*/
 
 void solve_Field_U_1D(Domain *D,int iteration)
 {
@@ -563,7 +435,7 @@ void solve_Field_U_1D(Domain *D,int iteration)
 void solve_Sc_1D(Domain *D,int iteration)
 {
    int i,s,h,H,numHarmony,order,n,step;
-   int startI,endI,idx;  
+   int startI,endI,idx,numInBeamlet;  
    double coef,tmp,J1,J2,K,Kr,K0,xi,macro,JJ,w[2]; 
 	double gamma,invGam,ks,ku,dBessel;
    double dz,theta,area,emitX,emitY,gammaX,gammaY,sigX,sigY;
@@ -589,6 +461,7 @@ void solve_Sc_1D(Domain *D,int iteration)
    LL=D->loadList;
    s=0;
    while(LL->next) {
+	  numInBeamlet=LL->numInBeamlet;
      emitX=LL->emitX/D->gamma0;
      emitY=LL->emitY/D->gamma0;
      gammaX=(1+LL->alphaX*LL->alphaX)/LL->betaX;
@@ -603,29 +476,30 @@ void solve_Sc_1D(Domain *D,int iteration)
      {
        p=D->particle[i].head[s]->pt;
        while(p) {
-         theta=p->theta;         macro=p->weight; 
-			gamma = p->gamma;       invGam = 1.0/p->gamma;
+		   for(n=0; n<numInBeamlet; n++) {
+           theta=p->theta[n];      macro=p->weight; 
+           gamma = p->gamma[n];       invGam = 1.0/gamma;
 
-         K=K0;
-         xi=ks/ku*0.25*K*K*invGam*invGam;			
-         for(h=0; h<numHarmony; h++)  {
-           H = D->harmony[h];
-           if(H%2==1)  {  //odd harmony
-             tmp=pow(-1.0,(H-1)*0.5);
-             idx=(int)(H*xi/dBessel);
-				 idx=idx%999;
-             w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-             order=(H-1)*0.5;
-             J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-             order=(H+1)*0.5;
-             J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-             JJ=tmp*(J1-J2);				
-			  } else 
-			    JJ=0.0;
+           K=K0;
+           xi=ks/ku*0.25*K*K*invGam*invGam;			
+           for(h=0; h<numHarmony; h++)  {
+             H = D->harmony[h];
+             if(H%2==1)  {  //odd harmony
+               tmp=pow(-1.0,(H-1)*0.5);
+               idx=(int)(H*xi/dBessel);
+				   idx=idx%999;
+               w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+               order=(H-1)*0.5;
+               J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+               order=(H+1)*0.5;
+               J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+               JJ=tmp*(J1-J2);				
+			    } else 
+			      JJ=0.0;
            
-			  D->ScU[h][i][0]+=JJ/(1.0)*macro*K*coef*cexp(-I*H*theta)*invGam;			  
-	      }		//End of harmony
-
+			    D->ScU[h][i][0]+=JJ/(1.0)*macro*K*coef*cexp(-I*H*theta)*invGam;			  
+	        }		//End of harmony
+         }
          p=p->next;
        }	//End of while(p)
 
@@ -657,6 +531,7 @@ void solve_Sc_1D(Domain *D,int iteration)
        LL=D->loadList;
        s=0;
        while(LL->next) {
+		   numInBeamlet=LL->numInBeamlet;
          emitX=LL->emitX/D->gamma0;
          emitY=LL->emitY/D->gamma0;
          gammaX=(1+LL->alphaX*LL->alphaX)/LL->betaX;
@@ -669,12 +544,13 @@ void solve_Sc_1D(Domain *D,int iteration)
 
          p=D->particle[i].head[s]->pt;
          while(p) {
-           theta=p->theta;
-			  macro=p->weight;
+			  for(n=0; n<numInBeamlet; n++) {
+             theta=p->theta[n];
+			    macro=p->weight;
 
-           for(l=0; l<L; l++) 
-             Sc[l]+=-I*coef/(1.0+l)*macro*cexp(-I*(l+1)*theta);
-
+             for(l=0; l<L; l++) 
+               Sc[l]+=-I*coef/(1.0+l)*macro*cexp(-I*(l+1)*theta);
+           }
            p=p->next;
 			}
 

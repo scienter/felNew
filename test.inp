@@ -24,9 +24,9 @@
  max_time=3500			//[minute]
 
 // max_step=10
- total_length=60	//[m]
- save_step=1
- save_start=158
+ total_length=12	//[m]
+ save_step=20
+ save_start=0
 
 [Domain]
 
@@ -91,10 +91,10 @@
  slope_of_B = -0.00		// [T/m]
  lambdaU = 2.6			// [cm]
 
- unit_start = 36.0			// [m]
- unit_end = 42.0			// [m]
- undulator_start = 36.5		// [m]
- undulator_end = 41.5		// [m]
+ unit_start = 6.0			// [m]
+ unit_end = 12.0			// [m]
+ undulator_start = 6.5		// [m]
+ undulator_end = 11.5		// [m]
  K0 = 0.0			
 
 [Wake_field]
@@ -107,8 +107,8 @@
 
 [Chicane]
  chicane_ONOFF=ON
- delay_time = 10					//[fs]
- position_z = 39					//[m]
+ delay_time = 50					//[fs]
+ position_z = 9					//[m]
  dipole_length = 0.4				//[m]
  dipole_distance_1 = 1.4		//[m]
  dipole_distance_2 = 1.4		//[m]
@@ -160,8 +160,8 @@
  energy_nodes=2
  energy_z0=-10e-6
  energy_z1=10e-6
- energy_n0=1.000
- energy_n1=1.000
+ energy_n0=1.01
+ energy_n1=0.99
 
  energySpread_nodes=2
  energySpread_z0=-10e-6

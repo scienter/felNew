@@ -388,9 +388,9 @@ void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
            noise += an*cos(m*theta)+bn*sin(m*theta);
          }				 
          tmp=theta + noise*noiseONOFF;
-         if(tmp>=dPhi) tmp-=dPhi; 
-         else if(tmp<0) tmp+=dPhi; 
-         else ;
+         //if(tmp>=dPhi) tmp-=dPhi; 
+         //else if(tmp<0) tmp+=dPhi; 
+         //else ;
          New->theta[n]=tmp;
        
        }  	// End for(n)
