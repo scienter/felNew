@@ -387,6 +387,7 @@ int findChiLoadParameters(int rank, ChiList *Chi,Domain *D,char *input)
 
      Chi->chiStart=z0-(Chi->L1+0.5*Chi->L2)-0.5*Chi->ld-D->dz;
      Chi->chiEnd=z0+(Chi->L1+0.5*Chi->L2)+0.5*Chi->ld+D->dz;
+     if(myrank==0) printf("chicane end position = %g [m]\n",Chi->chiEnd);
 
      vz=velocityC*sqrt(1.0-1.0/D->gamma0/D->gamma0);
      tmp1=Chi->delay*vz-(Chi->L2-Chi->ld)*0.5/D->gamma0/D->gamma0;

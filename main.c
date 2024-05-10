@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
 
     //loadSeed(&D,iteration);
 
-    //if(myrank==0) testK_quadG(&D); else ;
-    //MPI_Barrier(MPI_COMM_WORLD);
+    if(myrank==0) testK_quadG(&D); else ;
+    MPI_Barrier(MPI_COMM_WORLD);
 //printf("myrank=%d,iteration=%d, testK_quadG is done\n",myrank,iteration);
 
     //loading  beam
@@ -70,14 +70,14 @@ int main(int argc, char *argv[])
 //printf("myrank=%d,iteration=%d, beamLoading is done\n",myrank,iteration);
 
     // setting the wake_function
-    //wakeFunction(&D,iteration);
+    wakeFunction(&D,iteration);
 //printf("myrank=%d,iteration=%d, wakefunction is done\n",myrank,iteration);
 
 	 shiftZ=0.0;
     while(iteration<D.maxStep) 
     {
       // updating wake_field
-      //if(iteration%D.wakeFieldStep==0) updateWakeField(&D,iteration); else ;
+      if(iteration%D.wakeFieldStep==0) updateWakeField(&D,iteration); else ;
 //printf("myrank=%d,iteration=%d, updateWakeField is done\n",myrank,iteration);
 
       // update total energy
@@ -114,12 +114,16 @@ int main(int argc, char *argv[])
        	   if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
    
             if(D.chi_SSON==ON) {
-         //     seed_Field_test(&D);
-		   //	  selfSeed_Field(&D);
-         //	  if(myrank==0) printf("self-seeding is performed. at step=%d\n",iteration); 
+               seed_Field_test(&D);
+		   	   selfSeed_Field(&D);
+               if(myrank==0) 
+                  printf("=============>> self-seeding is performed. at step=%d\n",iteration); 
+               else ;
             } else {
-       //	     shiftChicaneField(&D);
-			     if(myrank==0) printf("Chicane is performed. at step=%d\n",iteration); else ;
+               shiftChicaneField(&D);
+			      if(myrank==0) 
+                  printf("-------------->> Chicane is performed. at step=%d.\n",iteration); 
+               else ;
 		      }
 			} else ;
       	
@@ -128,9 +132,9 @@ int main(int argc, char *argv[])
 			
 			set_chicane_zero(&D);		
 
-		//	if(D.driftFlag==OFF && D.mode==Time_Dependent)
-		//	  shiftField(D,iteration);
-		//	else ;
+			//if(D.driftFlag==OFF && D.mode==Time_Dependent)
+			//  shiftField(D,iteration);
+			//else ;
 //printf("myrank=%d,iteration=%d, shiftField is done\n",myrank,iteration);
 
       	updateK_quadG(&D,iteration,0);
@@ -193,7 +197,7 @@ int main(int argc, char *argv[])
 	   printf("Time duration at %ddump:%.4gmin\n",iteration,time_spent);
     } else ;
 
-//    cleanMemory(&D);
+    cleanMemory(&D);
 
     MPI_Finalize();
 

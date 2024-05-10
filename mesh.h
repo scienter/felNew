@@ -50,7 +50,7 @@ typedef struct _Domain
    // Field mesh
    int numHarmony,*harmony;
    double dz,shift; 
-   double complex ***U,***Uc,****Ez,***ScU,***ScEz,***slope;
+   double complex ***U,***Uc,****Ez,***ScU,***ScEz;
    double complex **Ma,**invMa,**Mb,**invMb;
    double **totalEnergy,**totalBunch;
    int currentFlag,shiftFlag,driftFlag;

@@ -136,7 +136,6 @@ void boundary(Domain *D)
 
 
    // Memory for shift
-   D->slope=complexMemory3Asign(D->numHarmony,D->subSliceN+2,D->nx,D->ny);
    D->shift=0.0;
 
    // setting up particle's pointer

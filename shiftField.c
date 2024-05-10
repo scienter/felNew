@@ -28,13 +28,10 @@ void shiftField(Domain D,int iteration)
 
   //1D field
   case 1:
-    //  shift minus
+    MPI_Transfer1F_Zplus(D.U,D.numHarmony,N,endI,startI);
+    shiftField_1D(&D,iteration);
     MPI_Transfer1F_Zminus(D.U,D.numHarmony,N,startI,endI);
 
-    shiftField_1D(&D,iteration);
-
-    //  shift plus
-    MPI_Transfer1F_Zplus(D.U,D.numHarmony,N,endI,1);
     break;
   case 3:
     //  shift minus
@@ -72,12 +69,6 @@ void shiftField_3D(Domain *D,int iteration)
      exit(0);
    } else ;
 
-   // calculating slope memory
-   for(h=0; h<numHarmony; h++)  
-     for(i=startI; i<endI; i++)
-       for(j=0; j<N; j++)
-	 D->slope[h][i][j]=D->U[h][i+1][j]-D->U[h][i][j];
-
 
    // field update
    for(i=endI-1; i>=startI; i--) {
@@ -98,7 +89,6 @@ void shiftField_3D(Domain *D,int iteration)
 
      for(h=0; h<numHarmony; h++)  
        for(j=0; j<N; j++)  {
-//         D->U[h][i+1][j]=D->U[h][i][j]+D->slope[h][i][j]*(1.0-shiftZ);		      
          D->U[h][i+1][j]=D->U[h][i][j];
 		 }
    }
@@ -115,13 +105,7 @@ void shiftField_1D(Domain *D,int iteration)
 
    shiftZ=(1+D->K0*D->K0)/(1+D->KRef*D->KRef);
 
-   // calculating slope memory
-   for(h=0; h<numHarmony; h++)  
-     for(i=startI; i<endI; i++)
-	D->slope[h][i][0]=D->U[h][i+1][0]-D->U[h][i][0];
-
    // field update
-   for(i=endI-1; i>=startI; i--) {
 /*	   
      cnt=0.0;
      aveGam=1.0;
@@ -138,9 +122,8 @@ void shiftField_1D(Domain *D,int iteration)
      aveGam/=cnt;
      shiftZ=coef/aveGam/aveGam;
 */
-     for(h=0; h<numHarmony; h++)  
-       D->U[h][i+1][0]=D->U[h][i][0];
-//       D->U[h][i+1][0]=D->U[h][i][0]+D->slope[h][i][0]*(1.0-shiftZ);
-   }
+   for(h=0; h<numHarmony; h++)  
+     for(i=endI-1; i>=startI; i--) 
+       D->U[h][i][0]=D->U[h][i-1][0];
 }
 

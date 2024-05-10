@@ -64,10 +64,10 @@ void calParticleDelay(Domain *D,int iteration)
 	      
            p->theta[n]+=(shiftZ0-shiftZ)*ks;
 
-			  if(fabs((shiftZ-shiftZ0)*ks/numSlice)>=subSliceN) {
-			    printf("shiftSlice=%g, subSliceN=%d it is too much.\n",shiftZ-shiftZ0,subSliceN);
-				 exit(0);
-			  }  else ;
+			  //if(fabs((shiftZ-shiftZ0)*ks/numSlice)>=subSliceN) {
+			  //  printf("shiftSlice=%g, subSliceN=%d it is too much.\n",shiftZ-shiftZ0,subSliceN);
+			//	 exit(0);
+			  //}  else ;
          }
          p=p->next;
        }
@@ -88,6 +88,7 @@ void rearrangeChicaneParticle(Domain *D)
     LoadList *LL;	 
     ptclList *p,*New,*prev,*tmp;
     int myrank, nTasks;
+    double a,b,c,d,e,f;
 
     MPI_Status status;
     MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
@@ -137,10 +138,6 @@ void rearrangeChicaneParticle(Domain *D)
 	       }	//End of while(p)
        }		//End of for(s)
 
-       for(rank=0; rank<nTasks; rank++)  
-		    printf("myrank=%d sendN[%d]=%d, ",myrank,rank,sendN[rank]);
-		 printf("\n");
-
        for(rank=0; rank<nTasks; rank++)   {
           if(myrank!=rank)
              MPI_Send(&sendN[rank],1,MPI_INT,rank,myrank,MPI_COMM_WORLD);
@@ -152,10 +149,6 @@ void rearrangeChicaneParticle(Domain *D)
 	    }
 	    MPI_Barrier(MPI_COMM_WORLD);
 
-       for(rank=0; rank<nTasks; rank++)  
-		    printf("myrank=%d recvN[%d]=%d, ",myrank,rank,recvN[rank]);
-		 printf("\n");
- 
        recvData=(double **)malloc(nTasks*sizeof(double *));
        sendData=(double **)malloc(nTasks*sizeof(double *));
        for(rank=0; rank<nTasks; rank++)   {
@@ -279,30 +272,26 @@ void rearrangeChicaneParticle(Domain *D)
                 indexI=recvData[rank][ii*dataCnt+N[s]*6+3];
                 i=indexI-minI+startI;          
                 New = (ptclList *)malloc(sizeof(ptclList));
+                New->next = particle[i].head[s]->pt;
+                particle[i].head[s]->pt = New;
 
+                New->weight=recvData[rank][ii*dataCnt+N[s]*6+0];
+                New->index=recvData[rank][ii*dataCnt+N[s]*6+1];
+                New->core=recvData[rank][ii*dataCnt+N[s]*6+2];
+                New->theta=(double *)malloc(N[s]*sizeof(double ));
+                New->x=(double *)malloc(N[s]*sizeof(double ));
+                New->y=(double *)malloc(N[s]*sizeof(double ));
+                New->px=(double *)malloc(N[s]*sizeof(double ));
+                New->py=(double *)malloc(N[s]*sizeof(double ));
+                New->gamma=(double *)malloc(N[s]*sizeof(double ));
 					 for(n=0; n<N[s]; n++) {
-                  New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
-                  New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
-                  New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
-                  New->gamma[n]=recvData[rank][ii*dataCnt+n*6+3];
-                  New->px[n]=recvData[rank][ii*dataCnt+n*6+4];
-                  New->py[n]=recvData[rank][ii*dataCnt+n*6+5];
+                   New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
+                   New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
+                   New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
+                   New->gamma[n]=recvData[rank][ii*dataCnt+n*6+3];
+                   New->px[n]=recvData[rank][ii*dataCnt+n*6+4];
+                   New->py[n]=recvData[rank][ii*dataCnt+n*6+5];
 					 }
-                //New->next = particle[i].head[s]->pt;
-                //particle[i].head[s]->pt = New;
-					 //for(n=0; n<N[s]; n++) {
-                //   New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
-                //   New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
-                //   New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
-                //   New->gamma[n]=recvData[rank][ii*dataCnt+n*6+3];
-                //   New->px[n]=recvData[rank][ii*dataCnt+n*6+4];
-                //   New->py[n]=recvData[rank][ii*dataCnt+n*6+5];
-					 //}
-					 
-                //New->weight=recvData[rank][ii*dataCnt+N[s]*6+0];
-                //New->index=recvData[rank][ii*dataCnt+N[s]*6+1];
-                //New->core=recvData[rank][ii*dataCnt+N[s]*6+2];
-					 
              }
 			    	 
           }

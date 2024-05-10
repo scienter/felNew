@@ -62,10 +62,13 @@ void cleanMemory(Domain *D)
         while(p) {
           tmp=p->next;
           D->particle[i].head[s]->pt=tmp;
-	  p->next=NULL;
-	  free(p);
-	  p=D->particle[i].head[s]->pt;
-	}
+          free(p->x);      free(p->y);
+          free(p->px);     free(p->py);
+          free(p->theta);  free(p->gamma);
+          p->next=NULL;
+	       free(p);
+	       p=D->particle[i].head[s]->pt;
+	     }
         free(D->particle[i].head[s]);
       }
       free(D->particle[i].head);
@@ -131,14 +134,6 @@ void cleanMemory(Domain *D)
 	 free(D->chiList);
 
 
-
-    // delete matrix
-//    deleteField(D->Ma,D->harmony);
-//    deleteField(D->Mb,D->harmony);
-//    deleteField(D->invMa,D->harmony);
-//    deleteField(D->invMb,D->harmony);
-//    free(D->tmpU);
-
     // twiss parameter
     free(D->twsBX);
     free(D->twsGX);
@@ -158,9 +153,6 @@ void cleanMemory(Domain *D)
     complexDeleteField3(D->ScU,D->numHarmony,D->subSliceN+2);
     for(i=0; i<D->numHarmony; i++) free(D->totalEnergy[i]); free(D->totalEnergy);	 
 	 free(D->totalBunch);
-
-    // shift memory
-    complexDeleteField3(D->slope,D->numHarmony,D->subSliceN+2);
 
     // wake field
     free(D->den);
