@@ -469,6 +469,13 @@ void chicane_test(Domain *D,int iteration)
 		 D->ld=Chi->ld;
 		 D->L1=Chi->L1;
 		 D->L2=Chi->L2;
+
+       D->chi_delay=Chi->delay;
+       D->chi_SSON=Chi->selfSeedON;
+       D->chi_d=Chi->d;
+       D->bragTh=Chi->bragTh;
+       D->extincL=Chi->extincL;
+       D->chi0=Chi->chi0;
 	  } else if(x0<=z1 && z1<x1) {
        D->chicaneFlag=ON;
 	  } else ;
