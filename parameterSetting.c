@@ -20,6 +20,7 @@ int whatONOFF(char *str);
 int whatShape(char *str);
 int whatACDC(char *str);
 int whatUndType(char *str);
+void whatCrystall(double ks,ChiList *Chi,char *str);
 
 double randomV()
 {
@@ -405,14 +406,17 @@ int findChiLoadParameters(int rank, ChiList *Chi,Domain *D,char *input)
 	  if(Chi->selfSeedON==ON) {
        if(FindParameters("Chicane",rank,"crystal_thickness",input,str)) Chi->d=atof(str)*1e-6;
        else  { printf("In [Chicane], crystal_thickness=? [um]\n");  fail=1; }
-       if(FindParameters("Chicane",rank,"grating_const",input,str)) d=atof(str)*1e-9;
-       else  { printf("In [Chicane], grating_const=? [nm]\n");  fail=1; }
-       if(FindParameters("Chicane",rank,"extinction_length",input,str)) Chi->extincL=atof(str)*1e-6;
-       else  { printf("In [Chicane], extinction_length=? [um]\n");  fail=1; }
-       if(FindParameters("Chicane",rank,"chi0",input,str)) Chi->chi0=atof(str);
-       else  { printf("In [Chicane], chi0=? \n");  fail=1; }
-		 Chi->bragTh=asin(M_PI/(d*D->ks));
-       if (myrank==0) printf("brag angle=%g\n",Chi->bragTh*180/M_PI);
+       if(FindParameters("Chicane",rank,"crystal_type",input,str)) whatCrystal(D->ks,Chi,str);
+		 //if(myrank==0)
+		 //   printf("photon Energy=%g eV, extincL=%g, chi0=%g+I%g,bragTh=%g\n",D->ks*velocityC*hbar,Chi->extincL,creal(Chi->chi0),cimag(Chi->chi0),Chi->bragTh*180/M_PI);
+       else {
+         if(FindParameters("Chicane",rank,"extinction_length",input,str)) Chi->extincL=atof(str)*1e-6;
+         else  { printf("In [Chicane], extinction_length=? [um]\n");  fail=1; }
+         if(FindParameters("Chicane",rank,"chi0",input,str)) Chi->chi0=atof(str);
+         else  { printf("In [Chicane], chi0=? \n");  fail=1; }
+		   Chi->bragTh=asin(M_PI/(d*D->ks));
+         if (myrank==0) printf("brag angle=%g\n",Chi->bragTh*180/M_PI);
+		 }
 	  } else ;
    }
    if(fail==1)  exit(0); else ;
@@ -783,6 +787,7 @@ int whatBeamType(char *str)
      exit(0);
    }
 }
+
 
 int whatSpecies(char *str)
 {

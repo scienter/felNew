@@ -1,22 +1,65 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
 #include <math.h>
 #include "mesh.h"
 #include "constants.h"
-#include <gsl/gsl_errno.h>
 #include <gsl/gsl_sf_bessel.h>
 
 double complex ***complexMemory3Asign(int harmony,int nz,int nx,int ny);
 void complexDeleteField3(double complex ***field,int harmony,int subNz);
 
-void selfSeed_Field(Domain *D)
+
+void washingOut(Domain *D,int iteration)
+{
+   int i,startI,endI,s,n,numInBeamlet;
+	double dg,aveTh,minTh;
+   Particle *particle;
+   particle=D->particle;
+   LoadList *LL;
+   ptclList *p;
+
+   int nTasks,myrank;
+   MPI_Status status;
+   MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
+   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+
+   startI=1;  endI=D->subSliceN+1;
+
+	LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      numInBeamlet=LL->numInBeamlet;
+		dg=2*M_PI/(numInBeamlet*1.0);
+
+      for(i=startI; i<endI; i++)
+      {
+	      p=particle[i].head[s]->pt;
+		   while(p)  {
+			   aveTh=0.0;
+			   for(n=0; n<numInBeamlet; n++) aveTh+=p->theta[n];
+				aveTh/=1.0*numInBeamlet;
+
+				minTh=aveTh-M_PI;
+			   for(n=0; n<numInBeamlet; n++) p->theta[n]=minTh+n*dg;
+
+				p=p->next;
+			}
+		}
+
+      LL=LL->next;
+		s++;
+	}
+}
+
+void selfSeed_Field(Domain *D,int iteration)
 {
    int h,i,j,n,rank,N,startI,endI,numHarmony,minI,maxI,nn,ii;
 	int dataNum,start,sliceN,subN,*minmax,numSlice,indexI;
 	double delayT,dt,val,tmp,tau,ctau,arg,coef,sinTh;
-	double k0,shiftT,d,extincL,chi0,*sendData,*recvData,realV,imagV,*U;
-	double complex compVal,J,first,result,*data;
+	double k0,shiftT,d,extincL,*sendData,*recvData,realV,imagV,*U;
+	double complex chi0,tmpComp,compVal,J,first,result,*data;
    int myrank, nTasks;
 	FILE *out;
 
@@ -86,8 +129,8 @@ void selfSeed_Field(Domain *D)
 			      J=gsl_sf_bessel_J1(arg); J/=arg;
 			    }
 
-             tmp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
-             first=cexp(I*tmp);
+             tmpComp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
+             first=cexp(I*tmpComp);
              result=coef*first*J*compVal;
 //				 data[nn]+=result*dt*velocityC;
              U[h*numSlice*N*2 + (nn-1)*(N*2) + j*2 + 0]+=creal(result)*dt*velocityC;
@@ -143,12 +186,12 @@ void selfSeed_Field(Domain *D)
 }
 
 
-void seed_Field_test(Domain *D)
+void seed_Field_test(Domain *D,int iteration)
 {
    int nn;
 	double delayT,dt,tmp,tau,ctau,arg,coef,sinTh;
-	double k0,shiftT,d,extincL,chi0,maxT;
-	double complex compVal,J,first,result,*U,*listJ;
+	double k0,shiftT,d,extincL,maxT;
+	double complex chi0,tmpComp,compVal,first,result,*U,*listJ,J;
    FILE *out;
    char fileName[100];
    int myrank, nTasks;
@@ -177,6 +220,7 @@ void seed_Field_test(Domain *D)
       ctau=velocityC*tau;
 
       tmp=ctau*(2.0*d/sinTh+ctau/sinTh/sinTh);
+		printf("nn=%d, tmp=%g, d=%g, sinTh=%g\n",nn,tmp,d,sinTh);
       if(tmp==0.0) J=0.5;
       else if(tmp<0) {
         arg=M_PI/extincL*sqrt(fabs(tmp));
@@ -189,8 +233,8 @@ void seed_Field_test(Domain *D)
 
       listJ[nn]=J;
 
-      tmp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
-      first=cexp(I*tmp);
+      tmpComp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
+      first=cexp(I*tmpComp);
       result=coef*first*J;
       
       U[nn]=result;
@@ -210,5 +254,58 @@ void seed_Field_test(Domain *D)
    free(U);
    free(listJ);
 }
+
+
+void whatCrystal(double ks,ChiList *Chi,char *str)
+{
+   double d,chi0R,chi0I,energy;
+	double a0,a1,a2,a3,a4,a5,a6;
+	double b0,b1,b2,b3,b4,b5,b6;
+   int myrank, nTasks;
+   MPI_Status status;
+
+   MPI_Comm_size(MPI_COMM_WORLD, &nTasks);     
+   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);     
+
+   energy=ks*velocityC*hbar;   //eV
+	if(energy<4000) {
+	   if(myrank==0) 
+		   printf("photon energy is %g eV, which is not allowed for now!\n",energy); 
+		else ;
+		exit(0);
+	} else ;
+
+   if(strstr(str,"Si_100"))  {
+     d=0.543096892e-9;     //grating constant
+
+	  a0=-0.291154;
+	  a1=-1037.78;
+	  b0=4.90666e-5;
+	  b1=-3.54453e-9;
+	  b2=9.15755e-14;
+	  chi0R=a0/(energy+a1) + b0+b1*energy+b2*pow(energy,2);
+	  a0=-0.0298072;
+	  a1=-1799.71;
+	  b0=1.61241e-5;
+	  b1=-2.53438e-9;
+	  b2=1.65622e-13;
+	  b3=-3.88831e-18;
+	  chi0I=a0/(energy+a1) + b0+b1*energy+b2*pow(energy,2)+b3*pow(energy,3);
+	  Chi->chi0=chi0R+I*chi0I;
+	  a0=5.03719e7;
+	  a1=497.096;
+	  a2=-0.0225941;
+	  a3=2.2854e-8;
+	  a4=1.63355e-11;
+     Chi->extincL=(a0+a1*energy+a2*pow(energy,2)+a3*pow(energy,3)+a4*pow(energy,4))*1e-6;
+	  Chi->bragTh=asin(M_PI/(d*ks));
+   }	
+   else   {
+     printf("No crystall! Define the crystall\n"); 
+     exit(0);
+   }
+}
+
+
 
 

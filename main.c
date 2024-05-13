@@ -114,8 +114,9 @@ int main(int argc, char *argv[])
        	   if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
    
             if(D.chi_SSON==ON) {
-               seed_Field_test(&D);
-		   	   selfSeed_Field(&D);
+               seed_Field_test(&D,iteration);
+		   	   selfSeed_Field(&D,iteration);
+					washingOut(&D,iteration);
                if(myrank==0) 
                   printf("=============>> self-seeding is performed. at step=%d\n",iteration); 
                else ;

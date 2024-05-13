@@ -158,7 +158,8 @@ typedef struct _ChiList  {
 
    //self seeding
    int selfSeedON;
-	double d, bragTh, extincL, chi0;
+	double d, bragTh, extincL;
+   double complex chi0;
 
    struct _ChiList *next;
 } ChiList;
@@ -212,6 +213,7 @@ void set_chicane_zero(Domain *D);
 void calParticleDelay(Domain *D,int iteration);
 void rearrangeChicaneParticle(Domain *D);
 void shiftChicaneField(Domain *D);
-void selfSeed_Field(Domain *D);
-void seed_Field_test(Domain *D);
+void selfSeed_Field(Domain *D,int iteration);
+void seed_Field_test(Domain *D,int iteration);
 void updateBFactor(Domain *D,int iteration);
+void washingOut(Domain *D,int iteration);

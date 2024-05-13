@@ -1,0 +1,2886 @@
+
+
+*******************************************************************************
+Mon May 13 17:40:08 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 8.70497e-07       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.000128374
+
+initial set of free parameter values
+
+a               = 1
+b               = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 2.7061e-10
+rel. change during last iteration : -1.37106e-06
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.24743e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.80407e-11
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = -0.112707        +/- 0.007466     (6.624%)
+b               = 2011.75          +/- 83.77        (4.164%)
+
+
+correlation matrix of the fit parameters:
+
+               a      b      
+a               1.000 
+b               0.942  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:41:44 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 5.04702e+50       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 2.05928e+24
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 1
+a6              = 1
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 3.50488e+46
+rel. change during last iteration : -14399
+
+degrees of freedom    (FIT_NDF)                        : 10
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.9202e+22
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.50488e+45
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 17:41:59 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.51183e+46       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 2.05928e+24
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 0.999935
+a6              = 0.00827625
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 2.45343e+42
+rel. change during last iteration : -14313
+
+degrees of freedom    (FIT_NDF)                        : 10
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.95321e+20
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.45343e+41
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 17:42:15 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.4454e+17        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 6.92399e+07
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+
+After 13 iterations the fit converged.
+final sum of squares of residuals : 1.46003e-09
+rel. change during last iteration : -4.24913e-16
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.02121e-05
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.04288e-10
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.000156563     +/- 1.23e-05     (7.857%)
+a1              = 2.60014e-08      +/- 3.175e-09    (12.21%)
+a2              = -1.06984e-12     +/- 1.717e-13    (16.05%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     
+a0              1.000 
+a1             -0.952  1.000 
+a2              0.894 -0.983  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:42:30 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72714e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 8.33767e+11
+
+initial set of free parameter values
+
+a0              = -0.000156563
+a1              = 2.60014e-08
+a2              = -1.06984e-12
+a3              = 1
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 3.5114e-10
+rel. change during last iteration : -2.40231e-09
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.19719e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.70108e-11
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.000246785     +/- 1.541e-05    (6.244%)
+a1              = 6.50562e-08      +/- 6.306e-09    (9.693%)
+a2              = -5.78265e-12     +/- 7.407e-13    (12.81%)
+a3              = 1.67773e-16      +/- 2.618e-17    (15.61%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     
+a0              1.000 
+a1             -0.982  1.000 
+a2              0.950 -0.990  1.000 
+a3             -0.914  0.967 -0.993  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:42:50 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.96165e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.08257e+16
+
+initial set of free parameter values
+
+a0              = -0.000246785
+a1              = 6.50562e-08
+a2              = -5.78265e-12
+a3              = 1.67773e-16
+a4              = 1
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 7.29268e-11
+rel. change during last iteration : -1.06337e-15
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.4652e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 6.07723e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.00035725      +/- 1.789e-05    (5.007%)
+a1              = 1.28856e-07      +/- 9.892e-09    (7.677%)
+a2              = -1.79775e-11     +/- 1.836e-12    (10.21%)
+a3              = 1.10315e-15      +/- 1.388e-16    (12.58%)
+a4              = -2.48145e-20     +/- 3.667e-21    (14.78%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     
+a0              1.000 
+a1             -0.991  1.000 
+a2              0.970 -0.993  1.000 
+a3             -0.942  0.976 -0.995  1.000 
+a4              0.913 -0.953  0.982 -0.996  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:43:07 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.20576e+42       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+a0              = -0.00035725
+a1              = 1.28856e-07
+a2              = -1.79775e-11
+a3              = 1.10315e-15
+a4              = -2.48145e-20
+a5              = 0.999934
+
+After 12 iterations the fit converged.
+final sum of squares of residuals : 7.26657e-11
+rel. change during last iteration : -1.86858e-06
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.57021e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 6.60598e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.00035725      +/- 4.582e-05    (12.83%)
+a1              = 1.28856e-07      +/- 3.209e-08    (24.91%)
+a2              = -1.79775e-11     +/- 8.254e-12    (45.91%)
+a3              = 1.10573e-15      +/- 9.842e-16    (89.01%)
+a4              = -2.52193e-20     +/- 5.499e-20    (218.1%)
+a5              = 1.54424e-26      +/- 1.163e-24    (7532%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     a5     
+a0              1.000 
+a1             -0.995  1.000 
+a2              0.980 -0.995  1.000 
+a3             -0.960  0.983 -0.996  1.000 
+a4              0.937 -0.966  0.986 -0.997  1.000 
+a5             -0.913  0.947 -0.973  0.989 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:43:30 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.17034e-06       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+a0              = 1e-30
+a1              = 1.28856e-07
+a2              = -1.79775e-11
+a3              = 1.10573e-15
+a4              = -2.52193e-20
+a5              = 1.54424e-26
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 7.44739e-10
+rel. change during last iteration : -4.6358e-09
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 8.22822e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 6.77035e-11
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 17:44:12 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.67261e-08       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.57735
+
+initial set of free parameter values
+
+a               = -0.112707
+b               = 2011.75
+c               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 1.87978e-08
+rel. change during last iteration : -1.35556e-11
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.66429e-05
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.3427e-09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 17:45:14 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.20634e+42       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 1
+
+After 26 iterations the fit converged.
+final sum of squares of residuals : 1.44256e-11
+rel. change during last iteration : -1.54864e-11
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.14517e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.31141e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.000481811     +/- 2.042e-05    (4.238%)
+a1              = 2.19294e-07      +/- 1.43e-08     (6.521%)
+a2              = -4.18699e-11     +/- 3.678e-12    (8.783%)
+a3              = 4.0001e-15       +/- 4.385e-16    (10.96%)
+a4              = -1.88072e-19     +/- 2.45e-20     (13.03%)
+a5              = 3.46152e-24      +/- 5.183e-25    (14.97%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     a5     
+a0              1.000 
+a1             -0.995  1.000 
+a2              0.980 -0.995  1.000 
+a3             -0.960  0.983 -0.996  1.000 
+a4              0.937 -0.966  0.986 -0.997  1.000 
+a5             -0.913  0.947 -0.973  0.989 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:46:04 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.65946e-08       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.00012831
+
+initial set of free parameter values
+
+a0              = -0.000481811
+b0              = 1
+
+After 9 iterations the fit converged.
+final sum of squares of residuals : 2.7061e-10
+rel. change during last iteration : -1.37639e-06
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.24743e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.80407e-11
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.112707        +/- 0.007466     (6.624%)
+b0              = -2011.75         +/- 83.77        (4.164%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     b0     
+a0              1.000 
+b0             -0.942  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:46:34 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.7061e-10        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.000246783
+
+initial set of free parameter values
+
+a0              = -0.112707
+b0              = -2011.75
+c0              = 1
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 2.7061e-10
+rel. change during last iteration : -2.16242e-07
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.39651e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.93293e-11
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.1127          +/- 4.632        (4110%)
+b0              = -2011.75         +/- 8.195e+04    (4074%)
+c0              = 0.999973         +/- 41.03        (4103%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     b0     c0     
+a0              1.000 
+b0              1.000  1.000 
+c0             -1.000 -1.000  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:47:03 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.04647e-07       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.9409e-05
+
+initial set of free parameter values
+
+a0              = 1
+b0              = 2000
+c0              = 5
+
+After 94 iterations the fit converged.
+final sum of squares of residuals : 2.7061e-10
+rel. change during last iteration : -2.99903e-06
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.39651e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.93293e-11
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.494145        +/- 20.29        (4106%)
+b0              = -8823.62         +/- 3.591e+05    (4070%)
+c0              = 4.38527          +/- 179.8        (4099%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     b0     c0     
+a0              1.000 
+b0              1.000  1.000 
+c0             -1.000 -1.000  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:47:47 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.32356e+09       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.57735
+
+initial set of free parameter values
+
+a0              = -0.494145
+a1              = 2.19294e-07
+b0              = -8823.62
+
+After 22 iterations the fit converged.
+final sum of squares of residuals : 2.11028e-11
+rel. change during last iteration : -7.24133e-06
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.22774e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.50735e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.16909         +/- 0.006607     (3.907%)
+a1              = -1592.33         +/- 53.65        (3.37%)
+b0              = 9.56881e-06      +/- 8.381e-07    (8.758%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     
+a0              1.000 
+a1             -0.973  1.000 
+b0             -0.901  0.820  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:48:03 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.53406e+09       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 4749.71
+
+initial set of free parameter values
+
+a0              = -0.16909
+a1              = -1592.33
+b0              = 9.56881e-06
+b1              = 1
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 1.90117e-12
+rel. change during last iteration : -3.86495e-09
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.82419e-07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.46244e-13
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.228547        +/- 0.006938     (3.036%)
+a1              = -1276.27         +/- 37.56        (2.943%)
+b0              = 2.58734e-05      +/- 1.625e-06    (6.28%)
+b1              = -9.15318e-10     +/- 8.627e-11    (9.425%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     
+a0              1.000 
+a1             -0.985  1.000 
+b0             -0.972  0.924  1.000 
+b1              0.922 -0.859 -0.983  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:48:25 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt'
+        format = z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.44503e+17       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = -0.228547
+a1              = -1276.27
+b0              = 2.58734e-05
+b1              = -9.15318e-10
+b2              = 1
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 1.81622e-13
+rel. change during last iteration : -3.02228e-07
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.23025e-07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.51352e-14
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.291154        +/- 0.007461     (2.562%)
+a1              = -1037.78         +/- 28           (2.698%)
+b0              = 4.90666e-05      +/- 2.476e-06    (5.045%)
+b1              = -3.54453e-09     +/- 2.665e-10    (7.519%)
+b2              = 9.15755e-14      +/- 9.069e-15    (9.903%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1             -0.992  1.000 
+b0             -0.988  0.962  1.000 
+b1              0.961 -0.923 -0.991  1.000 
+b2             -0.927  0.882  0.971 -0.994  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:50:53 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.92704e-08       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 4749.71
+
+initial set of free parameter values
+
+a0              = -0.291154
+a1              = -1037.78
+b0              = 4.90666e-05
+b1              = -3.54453e-09
+
+After 11 iterations the fit converged.
+final sum of squares of residuals : 1.83497e-12
+rel. change during last iteration : -6.38217e-06
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.75702e-07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.41152e-13
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0627417       +/- 0.008554     (13.63%)
+a1              = -1037.79         +/- 186.9        (18.01%)
+b0              = 2.51018e-05      +/- 1.816e-06    (7.233%)
+b1              = -2.74656e-09     +/- 9.261e-11    (3.372%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     
+a0              1.000 
+a1             -0.987  1.000 
+b0             -0.976  0.932  1.000 
+b1              0.930 -0.871 -0.984  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:51:16 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.05184e-09       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.57735
+
+initial set of free parameter values
+
+a0              = -0.0627417
+a1              = -1037.79
+b0              = 2.51018e-05
+
+After 51 iterations the fit converged.
+final sum of squares of residuals : 4.50835e-11
+rel. change during last iteration : -2.71233e-06
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.79451e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.22025e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.96269         +/- 0.3076       (31.95%)
+a1              = 8431.98          +/- 2479         (29.4%)
+b0              = 8.11391e-05      +/- 9.421e-06    (11.61%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     
+a0              1.000 
+a1             -0.996  1.000 
+b0             -0.994  0.982  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:51:21 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.50835e-11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 4248.27
+
+initial set of free parameter values
+
+a0              = -0.96269
+a1              = 8431.98
+b0              = 8.11391e-05
+b1              = -2.74656e-09
+b2              = 9.15755e-14
+
+After 2 iterations the fit converged.
+final sum of squares of residuals : 4.50731e-11
+rel. change during last iteration : -6.62674e-08
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.93806e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.75609e-12
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 17:51:34 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.0714e-09        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = -0.96269
+a1              = 8431.98
+b0              = 8.11391e-05
+b1              = -2.74395e-09
+b2              = 9.16671e-14
+
+After 11 iterations the fit converged.
+final sum of squares of residuals : 4.02823e-11
+rel. change during last iteration : -3.68901e-07
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.83217e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.35686e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.96269         +/- 15.75        (1636%)
+a1              = 8431.98          +/- 6.619e+04    (785%)
+b0              = 8.33766e-05      +/- 0.001012     (1214%)
+b1              = -3.39989e-09     +/- 4.273e-08    (1257%)
+b2              = 3.66383e-14      +/- 8.214e-13    (2242%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1             -0.999  1.000 
+b0             -0.999  0.997  1.000 
+b1              0.996 -0.991 -0.999  1.000 
+b2             -0.989  0.981  0.993 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:51:53 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.4454e+17        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+b1              = 1
+b2              = 1
+
+After 72 iterations the fit converged.
+final sum of squares of residuals : 8.53487e-14
+rel. change during last iteration : -4.21576e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 8.4335e-08
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.11239e-15
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.021395        +/- 0.001353     (6.323%)
+a1              = -1985            +/- 41.8         (2.106%)
+b0              = 8.44852e-06      +/- 7.934e-07    (9.391%)
+b1              = -8.62129e-10     +/- 1.059e-10    (12.29%)
+b2              = 2.70914e-14      +/- 4.069e-15    (15.02%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1             -0.987  1.000 
+b0             -0.971  0.926  1.000 
+b1              0.925 -0.867 -0.987  1.000 
+b2             -0.877  0.813  0.958 -0.991  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:52:18 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.79536e-10       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 4749.71
+
+initial set of free parameter values
+
+a0              = -0.021395
+a1              = -1985
+b0              = 8.44852e-06
+b1              = -8.62129e-10
+
+After 10 iterations the fit converged.
+final sum of squares of residuals : 1.01371e-12
+rel. change during last iteration : -6.13667e-06
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.79245e-07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.79776e-14
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0193974       +/- 0.00215      (11.08%)
+a1              = -1985            +/- 88.97        (4.482%)
+b0              = 5.24187e-06      +/- 7.498e-07    (14.3%)
+b1              = -2.66409e-10     +/- 4.599e-11    (17.26%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     
+a0              1.000 
+a1             -0.980  1.000 
+b0             -0.950  0.883  1.000 
+b1              0.885 -0.804 -0.977  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:52:33 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.74119e-10       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.000284884
+
+initial set of free parameter values
+
+a0              = -0.0193974
+a1              = -1985
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 3.77801e-11
+rel. change during last iteration : -6.29677e-06
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.58703e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.51867e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0123682       +/- 0.00285      (23.04%)
+a1              = -1985            +/- 299.5        (15.09%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     
+a0              1.000 
+a1             -0.942  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:52:50 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.90355e-10       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = -0.0123682
+a1              = -1985
+b0              = 5.24187e-06
+b1              = -2.66409e-10
+b2              = 2.70914e-14
+
+After 15 iterations the fit converged.
+final sum of squares of residuals : 8.53487e-14
+rel. change during last iteration : -8.05856e-10
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 8.4335e-08
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.11239e-15
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0213948       +/- 0.001353     (6.323%)
+a1              = -1985            +/- 41.8         (2.106%)
+b0              = 8.44846e-06      +/- 7.934e-07    (9.391%)
+b1              = -8.62121e-10     +/- 1.059e-10    (12.29%)
+b2              = 2.70911e-14      +/- 4.069e-15    (15.02%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1             -0.987  1.000 
+b0             -0.971  0.926  1.000 
+b1              0.925 -0.867 -0.987  1.000 
+b2             -0.877  0.813  0.958 -0.991  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:53:51 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.53435e+09       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 4749.71
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+b1              = 1
+
+After 29 iterations the fit converged.
+final sum of squares of residuals : 4.54631e-13
+rel. change during last iteration : -1.84009e-06
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.87007e-07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.49716e-14
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0148529       +/- 0.001036     (6.974%)
+a1              = -2186.63         +/- 46.37        (2.121%)
+b0              = 3.72406e-06      +/- 4.263e-07    (11.45%)
+b1              = -1.80149e-10     +/- 2.755e-11    (15.29%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     
+a0              1.000 
+a1             -0.977  1.000 
+b0             -0.939  0.863  1.000 
+b1              0.867 -0.779 -0.974  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:54:22 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 17.0055           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.57735
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+
+After 7 iterations the fit converged.
+final sum of squares of residuals : 4.99578e-11
+rel. change during last iteration : -7.42153e-06
+
+degrees of freedom    (FIT_NDF)                        : 14
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.88902e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.56841e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0456475       +/- 0.02922      (64%)
+a1              = 0.976708         +/- 1674         (1.714e+05%)
+b0              = 4.4277e-06       +/- 2.25e-06     (50.82%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     
+a0              1.000 
+a1             -0.984  1.000 
+b0             -0.959  0.908  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:54:40 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 5.8745e-07        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.00012831
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 1.28711e-10
+rel. change during last iteration : -2.6606e-06
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 2.92929e-06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.58075e-12
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0243239       +/- 0.01289      (53%)
+a1              = 0.990746         +/- 2040         (2.059e+05%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     
+a0              1.000 
+a1             -0.953  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:55:59 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.4454e+17        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+b1              = 1
+b2              = 1
+
+After 72 iterations the fit converged.
+final sum of squares of residuals : 8.53487e-14
+rel. change during last iteration : -4.21576e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 8.4335e-08
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.11239e-15
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.021395        +/- 0.001353     (6.323%)
+a1              = -1985            +/- 41.8         (2.106%)
+b0              = 8.44852e-06      +/- 7.934e-07    (9.391%)
+b1              = -8.62129e-10     +/- 1.059e-10    (12.29%)
+b2              = 2.70914e-14      +/- 4.069e-15    (15.02%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1             -0.987  1.000 
+b0             -0.971  0.926  1.000 
+b1              0.925 -0.867 -0.987  1.000 
+b2             -0.877  0.813  0.958 -0.991  1.000 
+
+
+*******************************************************************************
+Mon May 13 17:56:47 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 67.9998           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+a0              = -0.021395
+b1              = -8.62129e-10
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 17:57:13 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 67.9998           delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+a0              = -0.021395
+a1              = -1985
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 17:57:59 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:3
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72781e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 6.80768e+11
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+
+After 309 iterations the fit converged.
+final sum of squares of residuals : 1.48439e-14
+rel. change during last iteration : -3.87e-07
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.67348e-08
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.34945e-15
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = -0.0298072       +/- 0.00168      (5.635%)
+a1              = -1799.71         +/- 36.01        (2.001%)
+b0              = 1.61241e-05      +/- 1.283e-06    (7.955%)
+b1              = -2.53438e-09     +/- 2.606e-10    (10.28%)
+b2              = 1.65622e-13      +/- 2.078e-14    (12.55%)
+b3              = -3.88831e-18     +/- 5.722e-19    (14.72%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     b3     
+a0              1.000 
+a1             -0.992  1.000 
+b0             -0.981  0.950  1.000 
+b1              0.949 -0.907 -0.991  1.000 
+b2             -0.913  0.863  0.972 -0.994  1.000 
+b3              0.876 -0.823 -0.947  0.980 -0.996  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:01:21 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 8.33767e+11
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -3.82944e-06
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 73961.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.47025e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 5.12629e+07      +/- 2.193e+05    (0.4278%)
+a1              = 214.244          +/- 89.74        (41.89%)
+a2              = 0.00247373       +/- 0.01054      (426.1%)
+a3              = -4.0668e-07      +/- 3.726e-07    (91.63%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     
+a0              1.000 
+a1             -0.982  1.000 
+a2              0.950 -0.990  1.000 
+a3             -0.914  0.967 -0.993  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:01:36 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 7.11132e+10       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 7.45744e+11
+
+initial set of free parameter values
+
+a0              = 5.12629e+07
+a1              = 214.244
+a2              = 0.00247373
+a3              = -4.0668e-07
+a4              = 1
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -4.01246e-14
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 76981.2
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.9261e+09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:01:49 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.98159e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.08257e+16
+
+initial set of free parameter values
+
+a0              = 5.12629e+07
+a1              = 214.244
+a2              = 0.00247373
+a3              = -4.0668e-07
+a4              = 1.001
+
+After 20 iterations the fit converged.
+final sum of squares of residuals : 3.4811e+10
+rel. change during last iteration : -4.60563e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 53860.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.90092e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 5.25247e+07      +/- 3.908e+05    (0.7441%)
+a1              = -514.533         +/- 216.1        (42.01%)
+a2              = 0.141775         +/- 0.04012      (28.3%)
+a3              = -1.10915e-05     +/- 3.033e-06    (27.34%)
+a4              = 2.83455e-10      +/- 8.013e-11    (28.27%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     
+a0              1.000 
+a1             -0.991  1.000 
+a2              0.970 -0.993  1.000 
+a3             -0.942  0.976 -0.995  1.000 
+a4              0.913 -0.953  0.982 -0.996  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:02:05 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.20605e+42       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+a0              = 5.25247e+07
+a1              = -514.533
+a2              = 0.141775
+a3              = -1.10915e-05
+a4              = 2.83455e-10
+a5              = 1
+
+After 12 iterations the fit converged.
+final sum of squares of residuals : 3.47062e+10
+rel. change during last iteration : -1.56934e-06
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 56170.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.15511e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 5.25247e+07      +/- 1.001e+06    (1.907%)
+a1              = -514.533         +/- 701.4        (136.3%)
+a2              = 0.141775         +/- 0.1804       (127.2%)
+a3              = -1.11431e-05     +/- 2.151e-05    (193%)
+a4              = 2.91565e-10      +/- 1.202e-09    (412.2%)
+a5              = -3.09352e-16     +/- 2.542e-14    (8217%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     a5     
+a0              1.000 
+a1             -0.995  1.000 
+a2              0.980 -0.995  1.000 
+a3             -0.960  0.983 -0.996  1.000 
+a4              0.937 -0.966  0.986 -0.997  1.000 
+a5             -0.913  0.947 -0.973  0.989 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:06:00 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.20634e+42       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 1
+
+After 25 iterations the fit converged.
+final sum of squares of residuals : 1.13341e+10
+rel. change during last iteration : -1.24699e-06
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 32099.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.03037e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 5.502e+07        +/- 5.723e+05    (1.04%)
+a1              = -2326.25         +/- 400.8        (17.23%)
+a2              = 0.620403         +/- 0.1031       (16.62%)
+a3              = -6.91249e-05     +/- 1.229e-05    (17.78%)
+a4              = 3.55394e-09      +/- 6.868e-10    (19.33%)
+a5              = -6.93433e-14     +/- 1.453e-14    (20.95%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     a5     
+a0              1.000 
+a1             -0.995  1.000 
+a2              0.980 -0.995  1.000 
+a3             -0.960  0.983 -0.996  1.000 
+a4              0.937 -0.966  0.986 -0.997  1.000 
+a5             -0.913  0.947 -0.973  0.989 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:06:33 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 5.04635e+50       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 2.05928e+24
+
+initial set of free parameter values
+
+a0              = 5.502e+07
+a1              = -2326.25
+a2              = 0.620403
+a3              = -6.91249e-05
+a4              = 3.55394e-09
+a5              = -6.93433e-14
+a6              = 1
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 3.50441e+46
+rel. change during last iteration : -14399
+
+degrees of freedom    (FIT_NDF)                        : 10
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.91981e+22
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.50441e+45
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:06:54 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 1
+a6              = 1
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 18:07:01 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+a2              = 1
+a3              = 1
+a4              = 1
+a5              = 1
+a6              = 1.001
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 18:07:40 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+b0              = 1
+b1              = 1
+b2              = 1
+
+After 11 iterations the fit converged.
+final sum of squares of residuals : 3.93951e+22
+rel. change during last iteration : -7.22423e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.72968e+10
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.28292e+21
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 1.9336e+08       +/- 6.436e+19    (3.329e+13%)
+a1              = -4.92582e+08     +/- 1.349e+20    (2.738e+13%)
+b0              = -5.37712e+11     +/- 2.595e+11    (48.26%)
+b1              = 2.32783e+08      +/- 2.193e+07    (9.42%)
+b2              = -28090.3         +/- 1357         (4.83%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1              0.658  1.000 
+b0              0.893  0.861  1.000 
+b1             -0.490 -0.560 -0.758  1.000 
+b2              0.604  0.670  0.840 -0.977  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:07:57 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.93951e+22       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.70498e-09
+
+initial set of free parameter values
+
+a0              = 1.9336e+08
+a1              = -4.92582e+08
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 3.93951e+22
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.12478e+10
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.62634e+21
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 1.9336e+08       +/- 1.998e+19    (1.033e+13%)
+a1              = -4.92582e+08     +/- 5.629e+19    (1.143e+13%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     
+a0              1.000 
+a1             -0.962  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:08:25 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.93951e+22       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 5.3633e+07
+
+initial set of free parameter values
+
+a0              = 1.9336e+08
+a1              = -4.92582e+08
+b0              = -5.37712e+11
+b1              = 2.32783e+08
+b2              = -28090.3
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 3.93951e+22
+rel. change during last iteration : 0
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.72968e+10
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.28292e+21
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 1.9336e+08       +/- 6.436e+19    (3.329e+13%)
+a1              = -4.92582e+08     +/- 1.349e+20    (2.738e+13%)
+b0              = -5.37712e+11     +/- 2.595e+11    (48.26%)
+b1              = 2.32783e+08      +/- 2.193e+07    (9.42%)
+b2              = -28090.3         +/- 1357         (4.83%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     b0     b1     b2     
+a0              1.000 
+a1              0.658  1.000 
+b0              0.893  0.861  1.000 
+b1             -0.490 -0.560 -0.758  1.000 
+b2              0.604  0.670  0.840 -0.977  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:08:44 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.7504e+16        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0.00012831
+
+initial set of free parameter values
+
+a0              = 1
+a1              = 1
+
+After 2 iterations the fit converged.
+final sum of squares of residuals : 4.75024e+16
+rel. change during last iteration : -1.85838e-06
+
+degrees of freedom    (FIT_NDF)                        : 15
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 5.62746e+07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.16683e+15
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 2.45695e+11      +/- 2.406e+20    (9.794e+10%)
+a1              = 2.7425e+08       +/- 2.689e+17    (9.804e+10%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     
+a0              1.000 
+a1              1.000  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:10:29 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.7504e+16        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 8.33767e+11
+
+initial set of free parameter values
+
+b0              = 1e-30
+b1              = 1e-30
+b2              = 1e-30
+b3              = 1e-30
+
+After 12 iterations the fit converged.
+final sum of squares of residuals : 2.98972e+14
+rel. change during last iteration : -2.60808e-09
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.79561e+06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.29979e+13
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:10:38 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72639e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 8.33767e+11
+
+initial set of free parameter values
+
+b0              = 7.59533e-16
+b1              = 20821.6
+b2              = -2.33889
+b3              = 1
+
+After 4 iterations the fit converged.
+final sum of squares of residuals : 2.98972e+14
+rel. change during last iteration : -2.3537e-09
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 4.79561e+06
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.29979e+13
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:11:03 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 8.33767e+11
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -3.82944e-06
+
+degrees of freedom    (FIT_NDF)                        : 13
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 73961.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.47025e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.12629e+07      +/- 2.193e+05    (0.4278%)
+b1              = 214.244          +/- 89.74        (41.89%)
+b2              = 0.00247373       +/- 0.01054      (426.1%)
+b3              = -4.0668e-07      +/- 3.726e-07    (91.63%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     
+b0              1.000 
+b1             -0.982  1.000 
+b2              0.950 -0.990  1.000 
+b3             -0.914  0.967 -0.993  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:11:37 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.96165e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.08257e+16
+
+initial set of free parameter values
+
+b0              = 5.12629e+07
+b1              = 214.244
+b2              = 0.00247373
+b3              = -4.0668e-07
+b4              = 1
+
+After 20 iterations the fit converged.
+final sum of squares of residuals : 3.4811e+10
+rel. change during last iteration : -4.60563e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 53860.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.90092e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.25247e+07      +/- 3.908e+05    (0.7441%)
+b1              = -514.533         +/- 216.1        (42.01%)
+b2              = 0.141775         +/- 0.04012      (28.3%)
+b3              = -1.10915e-05     +/- 3.033e-06    (27.34%)
+b4              = 2.83455e-10      +/- 8.013e-11    (28.27%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     
+b0              1.000 
+b1             -0.991  1.000 
+b2              0.970 -0.993  1.000 
+b3             -0.942  0.976 -0.995  1.000 
+b4              0.913 -0.953  0.982 -0.996  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:11:44 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 3.4811e+10        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 9.88247e+15
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.10915e-05
+b4              = 2.83455e-10
+b5              = 1
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 3.4811e+10
+rel. change during last iteration : -2.41083e-15
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 56255.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.16463e+09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:11:57 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.21046e+42       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.10915e-05
+b4              = 2.83455e-10
+b5              = 1.001
+
+After 12 iterations the fit converged.
+final sum of squares of residuals : 3.47062e+10
+rel. change during last iteration : -1.56934e-06
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 56170.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 3.15511e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.25247e+07      +/- 1.001e+06    (1.907%)
+b1              = -514.533         +/- 701.4        (136.3%)
+b2              = 0.141775         +/- 0.1804       (127.2%)
+b3              = -1.11431e-05     +/- 2.151e-05    (193%)
+b4              = 2.91565e-10      +/- 1.202e-09    (412.2%)
+b5              = -3.09352e-16     +/- 2.542e-14    (8217%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     b5     
+b0              1.000 
+b1             -0.995  1.000 
+b2              0.980 -0.995  1.000 
+b3             -0.960  0.983 -0.996  1.000 
+b4              0.937 -0.966  0.986 -0.997  1.000 
+b5             -0.913  0.947 -0.973  0.989 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:12:24 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 8.46875e+14       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.47064e+20
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.11431e-05
+b4              = 1e-30
+b5              = -3.09352e-16
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 8.25627e+12
+rel. change during last iteration : -9.40749e-11
+
+degrees of freedom    (FIT_NDF)                        : 11
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 866355
+variance of residuals (reduced chisquare) = WSSR/ndf   : 7.5057e+11
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:12:49 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 8.25709e+12       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 7.45744e+11
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.11431e-05
+b4              = 1e-30
+
+After 2 iterations the fit converged.
+final sum of squares of residuals : 7.89956e+12
+rel. change during last iteration : -7.98921e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 811355
+variance of residuals (reduced chisquare) = WSSR/ndf   : 6.58297e+11
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:13:00 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 7.86838e+14       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 7.45744e+11
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.10561e-05
+b4              = 1.001e-30
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -9.07216e-10
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 76981.2
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.9261e+09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:13:11 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 7.45744e+11
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1.002e-30
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -1.49726e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 76981.2
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.9261e+09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:13:26 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 4.72761e+25       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 7.45744e+11
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1.003e-30
+
+After 16 iterations the fit converged.
+final sum of squares of residuals : 7.11132e+10
+rel. change during last iteration : -1.49726e-06
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 76981.2
+variance of residuals (reduced chisquare) = WSSR/ndf   : 5.9261e+09
+
+BREAK:          Singular matrix in Invert_RtR
+
+
+
+*******************************************************************************
+Mon May 13 18:13:36 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.96301e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.08257e+16
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 3.4811e+10
+rel. change during last iteration : -3.0326e-11
+
+degrees of freedom    (FIT_NDF)                        : 12
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 53860.1
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.90092e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.25247e+07      +/- 3.908e+05    (0.7441%)
+b1              = -514.533         +/- 216.1        (42.01%)
+b2              = 0.141775         +/- 0.04012      (28.3%)
+b3              = -1.10915e-05     +/- 3.033e-06    (27.34%)
+b4              = 2.83455e-10      +/- 8.013e-11    (28.27%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     
+b0              1.000 
+b1             -0.991  1.000 
+b2              0.970 -0.993  1.000 
+b3             -0.942  0.976 -0.995  1.000 
+b4              0.913 -0.953  0.982 -0.996  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:14:26 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+	y range restricted to [4000.00 : *]
+        #datapoints = 14
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.0854e+10        delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.19293e+16
+
+initial set of free parameter values
+
+b0              = 5.25247e+07
+b1              = -514.533
+b2              = 0.141775
+b3              = -1.10915e-05
+b4              = 2.83455e-10
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 2.0854e+10
+rel. change during last iteration : -7.70771e-09
+
+degrees of freedom    (FIT_NDF)                        : 9
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 48136.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 2.31711e+09
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.25247e+07      +/- 7.58e+05     (1.443%)
+b1              = -514.533         +/- 366.6        (71.24%)
+b2              = 0.141775         +/- 0.06161      (43.45%)
+b3              = -1.10915e-05     +/- 4.318e-06    (38.93%)
+b4              = 2.83455e-10      +/- 1.076e-10    (37.96%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     
+b0              1.000 
+b1             -0.995  1.000 
+b2              0.981 -0.996  1.000 
+b3             -0.962  0.984 -0.996  1.000 
+b4              0.941 -0.968  0.987 -0.997  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:14:37 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+	y range restricted to [4000.00 : *]
+        #datapoints = 14
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.96297e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.19293e+16
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 1.1827e+09
+rel. change during last iteration : -7.55312e-07
+
+degrees of freedom    (FIT_NDF)                        : 9
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 11463.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.31411e+08
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.03719e+07      +/- 1.805e+05    (0.3584%)
+b1              = 497.096          +/- 87.3         (17.56%)
+b2              = -0.0225941       +/- 0.01467      (64.93%)
+b3              = 2.2854e-08       +/- 1.028e-06    (4500%)
+b4              = 1.63355e-11      +/- 2.563e-11    (156.9%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     
+b0              1.000 
+b1             -0.995  1.000 
+b2              0.981 -0.996  1.000 
+b3             -0.962  0.984 -0.996  1.000 
+b4              0.941 -0.968  0.987 -0.997  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:40:40 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+        #datapoints = 17
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 6.26744e+16       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 2.05928e+24
+
+initial set of free parameter values
+
+a0              = 6e+07
+a1              = -6000
+a2              = 2
+a3              = -0.0003
+a4              = 2e-08
+a5              = -8e-13
+a6              = 1e-17
+
+After 1 iterations the fit converged.
+final sum of squares of residuals : 1.58769e+15
+rel. change during last iteration : -38.4751
+
+degrees of freedom    (FIT_NDF)                        : 10
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 1.26004e+07
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.58769e+14
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a0              = 6e+07            +/- 5.763e+08    (960.6%)
+a1              = -6000            +/- 4.889e+05    (8149%)
+a2              = 2                +/- 161          (8050%)
+a3              = -0.0003          +/- 0.02648      (8827%)
+a4              = 2e-08            +/- 2.311e-06    (1.155e+04%)
+a5              = -8e-13           +/- 1.021e-10    (1.277e+04%)
+a6              = 2.0911e-17       +/- 1.799e-15    (8602%)
+
+
+correlation matrix of the fit parameters:
+
+               a0     a1     a2     a3     a4     a5     a6     
+a0              1.000 
+a1             -0.997  1.000 
+a2              0.987 -0.997  1.000 
+a3             -0.974  0.989 -0.997  1.000 
+a4              0.957 -0.977  0.990 -0.998  1.000 
+a5             -0.939  0.962 -0.980  0.992 -0.998  1.000 
+a6              0.921 -0.947  0.968 -0.983  0.993 -0.998  1.000 
+
+
+*******************************************************************************
+Mon May 13 18:47:51 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+	y range restricted to [4000.00 : *]
+        #datapoints = 14
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 1.58277e+15       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+b0              = 5.03719e+07
+b1              = 497.096
+b2              = -0.0225941
+b3              = 2.2854e-08
+b4              = 1.63355e-11
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 18:48:02 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+	y range restricted to [4000.00 : *]
+        #datapoints = 14
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 5.04702e+50       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Mon May 13 18:48:28 2024
+
+
+FIT:    data read from 'Si_100_thick100um.txt' u 1:5
+        format = x:z
+	y range restricted to [4000.00 : *]
+        #datapoints = 14
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 9.98291e+33       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 1.19293e+16
+
+initial set of free parameter values
+
+b0              = 1
+b1              = 1
+b2              = 1
+b3              = 1
+b4              = 1.001
+
+After 21 iterations the fit converged.
+final sum of squares of residuals : 1.1827e+09
+rel. change during last iteration : -7.55311e-07
+
+degrees of freedom    (FIT_NDF)                        : 9
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 11463.4
+variance of residuals (reduced chisquare) = WSSR/ndf   : 1.31411e+08
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+b0              = 5.03719e+07      +/- 1.805e+05    (0.3584%)
+b1              = 497.096          +/- 87.3         (17.56%)
+b2              = -0.0225941       +/- 0.01467      (64.93%)
+b3              = 2.2854e-08       +/- 1.028e-06    (4500%)
+b4              = 1.63355e-11      +/- 2.563e-11    (156.9%)
+
+
+correlation matrix of the fit parameters:
+
+               b0     b1     b2     b3     b4     
+b0              1.000 
+b1             -0.995  1.000 
+b2              0.981 -0.996  1.000 
+b3             -0.962  0.984 -0.996  1.000 
+b4              0.941 -0.968  0.987 -0.997  1.000 
