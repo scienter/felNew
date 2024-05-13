@@ -88,7 +88,8 @@ typedef struct _Domain
 
    //SelfSeed
 	int chi_SSON;
-	double chi_d,bragTh,extincL,chi0;
+	double chi_d,bragTh,extincL;
+   double complex chi0;
    
    //Seed
    double P0,duration,spotSigR,a0,zR,focus;

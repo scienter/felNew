@@ -195,20 +195,22 @@ void seed_Field_test(Domain *D,int iteration)
    FILE *out;
    char fileName[100];
    int myrank, nTasks;
+   ChiList *Chi;
+   Chi=D->chiList;
 
    MPI_Status status;
    MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
    dt = D->lambda0*D->numLambdaU/velocityC;
-	delayT = D->chi_delay;
-	sinTh = sin(D->bragTh);
-	d=D->chi_d;
-	extincL=D->extincL;
-	chi0=D->chi0;
+	delayT = Chi->delay;
+	sinTh = sin(Chi->bragTh);
+	d=Chi->d;
+	extincL=Chi->extincL;
+	chi0=Chi->chi0;
 	k0=D->ks;
-   coef=M_PI*M_PI*D->chi_d*sinTh/(D->extincL*D->extincL);	
-   //printf("bragg=%g, extincL=%g\n",D->bragTh,extincL);
+   coef=M_PI*M_PI*Chi->d*sinTh/(Chi->extincL*Chi->extincL);	
+   printf("bragg=%g, extincL=%g\n",Chi->bragTh*180/M_PI,extincL);
 
    U=(double complex *)malloc(200*sizeof(double complex));
    listJ=(double complex *)malloc(200*sizeof(double complex));
@@ -220,7 +222,6 @@ void seed_Field_test(Domain *D,int iteration)
       ctau=velocityC*tau;
 
       tmp=ctau*(2.0*d/sinTh+ctau/sinTh/sinTh);
-		printf("nn=%d, tmp=%g, d=%g, sinTh=%g\n",nn,tmp,d,sinTh);
       if(tmp==0.0) J=0.5;
       else if(tmp<0) {
         arg=M_PI/extincL*sqrt(fabs(tmp));
@@ -236,6 +237,8 @@ void seed_Field_test(Domain *D,int iteration)
       tmpComp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
       first=cexp(I*tmpComp);
       result=coef*first*J;
+
+      printf("coef=%g, d=%g, sinTh=%g, extincL=%g\n",coef,Chi->d,sinTh,Chi->extincL);
       
       U[nn]=result;
    }
@@ -275,34 +278,46 @@ void whatCrystal(double ks,ChiList *Chi,char *str)
 		exit(0);
 	} else ;
 
-   if(strstr(str,"Si_100"))  {
-     d=0.543096892e-9;     //grating constant
+   if(strstr(str,"Diamond_220"))  {
+      d=1.261061E-10;     //grating constant
 
-	  a0=-0.291154;
-	  a1=-1037.78;
-	  b0=4.90666e-5;
-	  b1=-3.54453e-9;
-	  b2=9.15755e-14;
-	  chi0R=a0/(energy+a1) + b0+b1*energy+b2*pow(energy,2);
-	  a0=-0.0298072;
-	  a1=-1799.71;
-	  b0=1.61241e-5;
-	  b1=-2.53438e-9;
-	  b2=1.65622e-13;
-	  b3=-3.88831e-18;
-	  chi0I=a0/(energy+a1) + b0+b1*energy+b2*pow(energy,2)+b3*pow(energy,3);
-	  Chi->chi0=chi0R+I*chi0I;
-	  a0=5.03719e7;
-	  a1=497.096;
-	  a2=-0.0225941;
-	  a3=2.2854e-8;
-	  a4=1.63355e-11;
-     Chi->extincL=(a0+a1*energy+a2*pow(energy,2)+a3*pow(energy,3)+a4*pow(energy,4))*1e-6;
-	  Chi->bragTh=asin(M_PI/(d*ks));
+      if(energy<12000) {
+	      a0=-0.225282;
+	      a1=-1994.24;
+         b0=1.88132e-05;
+         b1=-5.31208e-10;
+      } else {
+         a0=-0.0528651;
+         a1=-6814.76;
+         b0=0.0;
+         b1=0.0;
+      }
+	   chi0R=a0/(energy+a1) + b0+b1*energy;
+      if(energy<12000) {
+         a0=-0.000495555;
+	      a1=-3529.73;
+	      b0=1.20412e-07;
+	      b1=-5.66126e-12;
+      } else {
+         a0=-1.26205e-05;
+         a1=-10024;
+         b0=0.0;
+         b1=0.0;
+      }
+	   chi0I=a0/(energy+a1) + b0+b1*energy;
+	   Chi->chi0=chi0R+I*chi0I;
+	   a0=-0.0564357;
+	   a1=0.00043456;
+	   Chi->extincL=(a0+a1*energy)*1e-6;
+	   Chi->bragTh=asin(M_PI/(d*ks));
+      if(myrank==0) 
+         printf("energy=%g eV,chi0=%g+I*%g, extincL=%g, braggAngle=%g\n",energy,creal(Chi->chi0),cimag(Chi->chi0),Chi->extincL,Chi->bragTh*180/M_PI);
+      else ;
+
    }	
    else   {
-     printf("No crystall! Define the crystall\n"); 
-     exit(0);
+      printf("No crystall! Define the crystall\n"); 
+      exit(0);
    }
 }
 
