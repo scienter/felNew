@@ -1,0 +1,182 @@
+
+[Chicane]
+ chicane_ONOFF=ON
+ delay_time = 14					//[fs]
+ position_z = 51					//[m]
+ dipole_length = 0.4				//[m]
+ dipole_distance_1 = 1.4		//[m]
+ dipole_distance_2 = 1.4		//[m]
+
+ selfseed_ONOFF = ON
+ crystal_thickness = 100      // [um]
+ crystal_type = Diamond_220
+ //grating_const = 8.91704e-2   // [nm] Diamond (004)
+ //extinction_length = 23.9480   // [um]
+ //chi0 = -0.15538e-4
+
+
+[Phase_shifter]
+ number = 0
+ start_position = 6	//[m]
+ interval_length = 6		//[m]
+ phase = 1.2
+
+[Save]
+ field_save=ON
+ particle_save=ON
+ density_save=OFF
+ current_save=OFF
+ dump_save=OFF
+
+ field_format=TXT
+ particle_format=TXT
+ current_format=TXT
+ density_format=TXT
+ dump_format=HDF
+
+ dump_start=1000
+ dump_step=1000
+
+ max_time=3500			//[minute]
+
+// max_step=10
+ total_length=120 //50	//[m]
+ save_step=10
+ save_start=0
+
+[Domain]
+
+ dimension=1
+// mode=Static
+// mode=Twiss
+ mode=Time_Dependent
+
+ minZ=-2			// [um]  For Time_Dependant
+ maxZ=3			// [um]  For Time_Dependant
+ minX=-300			// [um]
+ maxX=300				// [um]
+ minY=-300			// [um]
+ maxY=300				// [um]
+ nx=101
+ ny=101
+
+
+ num_harmony=1
+ harmony0 = 1
+ harmony1 = 3
+ harmony2 = 5
+
+ slices_in_bucket=10
+ lambdaUs_in_iteration=10	// number of lambdaU for one iteration
+
+[Space_charge]
+ activate = OFF
+ number_fourier_mode = 1
+ number_longitudinal_mode = 1
+ radial_grids = 100
+
+
+[Seed]
+ power=0			// [W]
+ rms_duration=30		// [fs]
+ spot_sigma_R=20		// [um]
+ focus=1			// [m]
+
+
+[Undulator]
+ undulator_mode = Linear
+ numbers=20
+ air=OFF
+ linear_taper = -0.0e-4	// [T/undulator]
+ quad_taper = -0.0		// [T/undulator]
+ slope_of_B = -0.00		// [T/m]
+ lambdaU = 2.6			// [cm]
+
+ unit_start = 0.0			// [m]
+ unit_end = 6.0			// [m]
+ undulator_start = 0.5		// [m]
+ undulator_end = 5.5		// [m]
+ K0 = 1.87			
+
+[Undulator]
+ undulator_mode = Linear
+ numbers=1
+ air=ON
+ linear_taper = -0.0e-4	// [T/undulator]
+ quad_taper = -0.0		// [T/undulator]
+ slope_of_B = -0.00		// [T/m]
+ lambdaU = 2.6			// [cm]
+
+ unit_start = 48			// [m]
+ unit_end = 54.0			// [m]
+ undulator_start = 48.5		// [m]
+ undulator_end = 53.5	// [m]
+ K0 = 0.0			
+
+[Wake_field]
+ activate = OFF
+ shape = Flat
+ ac_dc = AC
+ radius = 4.5e-3                // [m]
+ conductivity = 3.03e7          //
+ ctau = 2.4e-6                  // relaxation_time X c [m]
+
+[Quad]
+ numbers=13
+
+ unit_start = -0.0325		// [m]
+ unit_end = 9.9675			// [m]
+ quad_start = -0.0325		// [m]
+ quad_end = 0.0325			// [m]
+ g = 39				// [T/m]
+
+[Quad]
+ numbers=13
+
+ unit_start = 4.9675		// [m]
+ unit_end = 14.9675			// [m]
+ quad_start = 4.9675		// [m]
+ quad_end = 5.0325			// [m]
+ g = -38.5				// [T/m]
+
+
+[EBeam]
+ load_type = Polygon
+ noise_ONOFF = ON
+
+ species=Electron
+ beam_energy=8544		// [MeV]
+ energy_spread=0.01		// [%]
+ peak_current=2700		// [A]
+ norm_emittance_x=0.5             // [mm mrad]
+ norm_emittance_y=0.5             // [mm mrad]
+ beta_x=27			// [m]
+ beta_y=18        	// [m]
+ alpha_x=0.0			
+ alpha_y=0.0             	
+ beamlets_in_bucket=400
+ number_in_beamlet=4
+
+ z_nodes=2
+ z0=-2e-6
+ z1=2e-6
+ z_n0=1
+ z_n1=1
+
+ energy_nodes=2
+ energy_z0=-10e-6
+ energy_z1=10e-6
+ energy_n0=1.01
+ energy_n1=0.99
+
+ energySpread_nodes=2
+ energySpread_z0=-10e-6
+ energySpread_z1=10e-6
+ energySpread_n0=1
+ energySpread_n1=1
+
+ emit_nodes=2
+ emit_z0=-10e-6
+ emit_z1=10e-6
+ emit_n0=1
+ emit_n1=1

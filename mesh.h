@@ -87,7 +87,7 @@ typedef struct _Domain
    struct _ChiList *chiList;
 
    //SelfSeed
-	int chi_SSON;
+	int chi_SSON,chi_noiseONOFF;
 	double chi_d,bragTh,extincL;
    double complex chi0;
    
@@ -158,7 +158,7 @@ typedef struct _ChiList  {
    double chiStart,chiEnd,ld,L1,L2,B0,delay;
 
    //self seeding
-   int selfSeedON;
+   int selfSeedON,noiseONOFF;
 	double d, bragTh, extincL;
    double complex chi0;
 

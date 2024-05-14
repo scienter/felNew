@@ -80,7 +80,7 @@ void rearrangeChicaneParticle(Domain *D)
     Particle *particle;
     particle=D->particle;
 
-    int i,s,ii,intZ,cnt,deleteFlag,shiftFlag,dataCnt;
+    int i,s,ii,intZ,cnt,deleteFlag,shiftFlag,domainShiftFlag,dataCnt;
     int l,rank,startI,endI,nSpecies,minI,maxI,indexI,n,*N;
     double dPhi,theta,aveTh,delTh;
 	 int *sendN,*recvN,*start,*cntN;
@@ -167,6 +167,7 @@ void rearrangeChicaneParticle(Domain *D)
               
 			    deleteFlag=OFF;
 			    shiftFlag=OFF;
+			    domainShiftFlag=OFF;
 
 			    aveTh=0.0;
 			    for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
@@ -183,7 +184,10 @@ void rearrangeChicaneParticle(Domain *D)
                 //theta+=-1.0*dPhi*intZ;
 				    shiftFlag=ON;	
              } 
-             else   intZ=0;
+             else  {
+				    intZ=0;
+					 delTh=0.0;
+				 }
 
 			    if(D->mode==Static) intZ=0; else ;
 
@@ -193,6 +197,7 @@ void rearrangeChicaneParticle(Domain *D)
              for(rank=0; rank<nTasks; rank++) {
                 if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
 				       if(myrank!=rank) {
+						    domainShiftFlag=ON;
 				          for(n=0; n<N[s]; n++) {
                          sendData[rank][cntN[rank]*dataCnt+n*6+0]=p->theta[n]-delTh;
                          sendData[rank][cntN[rank]*dataCnt+n*6+1]=p->x[n];
@@ -212,7 +217,7 @@ void rearrangeChicaneParticle(Domain *D)
 				    } else ; 
 			    }		//End of for(n<nTasks)
                
-			    if(deleteFlag==ON && shiftFlag==OFF) {
+			    if(deleteFlag==ON || domainShiftFlag==ON) {
                 if(cnt==1)  {
                    particle[i].head[s]->pt = p->next;
 				       free(p->x);      free(p->y);
@@ -231,7 +236,7 @@ void rearrangeChicaneParticle(Domain *D)
 				       free(p);
 	                p=prev->next;
 				    }
-			    } else if(deleteFlag==OFF && shiftFlag==ON) {
+			    } else if(shiftFlag==ON && domainShiftFlag==OFF) {
                 if(cnt==1)  {
 					    for(n=0; n<N[s]; n++) p->theta[n]-=delTh;
                    particle[i].head[s]->pt = p->next;
@@ -255,7 +260,7 @@ void rearrangeChicaneParticle(Domain *D)
           }	//End of while(p)
        }		//End of for(i)
        
-       // shifting particles
+       // domain-shifting particles
        for(rank=0; rank<nTasks; rank++)  {
           if(myrank==rank)  {
              for(l=0; l<nTasks; l++) {
@@ -476,6 +481,7 @@ void chicane_test(Domain *D,int iteration)
        D->bragTh=Chi->bragTh;
        D->extincL=Chi->extincL;
        D->chi0=Chi->chi0;
+       D->chi_noiseONOFF=Chi->noiseONOFF;
 	  } else if(x0<=z1 && z1<x1) {
        D->chicaneFlag=ON;
 	  } else ;

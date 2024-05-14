@@ -6,8 +6,6 @@
 #include "mesh.h"
 #include "constants.h"
 #include <gsl/gsl_sf_bessel.h>
-#include <gsl/gsl_qrng.h>
-#include <gsl/gsl_randist.h>
 
 double complex ***complexMemory3Asign(int harmony,int nz,int nx,int ny);
 void complexDeleteField3(double complex ***field,int harmony,int subNz);
@@ -15,8 +13,8 @@ void complexDeleteField3(double complex ***field,int harmony,int subNz);
 
 void washingOut(Domain *D,int iteration)
 {
-   int i,m,startI,endI,s,n,numInBeamlet;
-	double dg,aveTh,minTh,theta,an,bn,noise,sigma,eNumbers,noiseONOFF;
+   int i,startI,endI,s,n,numInBeamlet;
+	double dg,aveTh,minTh;
    Particle *particle;
    particle=D->particle;
    LoadList *LL;
@@ -35,14 +33,14 @@ void washingOut(Domain *D,int iteration)
    ran = gsl_rng_alloc(T);
 
    startI=1;  endI=D->subSliceN+1;
-	noiseONOFF=D->chi_noiseONOFF;
+
 
 	LL=D->loadList;
    s=0;
    while(LL->next) {
       numInBeamlet=LL->numInBeamlet;
 		dg=2*M_PI/(numInBeamlet*1.0);
-      
+
       for(i=startI; i<endI; i++)
       {
 	      p=particle[i].head[s]->pt;
@@ -51,23 +49,9 @@ void washingOut(Domain *D,int iteration)
 			   for(n=0; n<numInBeamlet; n++) aveTh+=p->theta[n];
 				aveTh/=1.0*numInBeamlet;
 
-				eNumbers=p->weight*numInBeamlet;
-				if(eNumbers<10) eNumbers=10; else ; 
-
 				minTh=aveTh-M_PI;
-			   for(n=0; n<numInBeamlet; n++) {
-				   theta=minTh+n*dg;
-		         noise=0.0;
-               for(m=1; m<=numInBeamlet/2; m++) {
-			         sigma=sqrt(2.0/eNumbers/(m*m*1.0));     //Fawley PRSTAB V5 070701 (2002)
-				      //an=gaussianDist_1D(sigma);
-						//bn=gaussianDist_1D(sigma);
-						an=gsl_ran_gaussian(ran,sigma);
-						bn=gsl_ran_gaussian(ran,sigma);
-						noise += an*cos(m*theta)+bn*sin(m*theta);
-			      }
-				   p->theta[n]=theta + noise*noiseONOFF;
-            }
+			   for(n=0; n<numInBeamlet; n++) p->theta[n]=minTh+n*dg;
+
 				p=p->next;
 			}
 		}
@@ -75,7 +59,6 @@ void washingOut(Domain *D,int iteration)
       LL=LL->next;
 		s++;
 	}
-	gsl_rng_free(ran);
 }
 
 void selfSeed_Field(Domain *D,int iteration)

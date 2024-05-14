@@ -28,9 +28,9 @@ void shiftField(Domain D,int iteration)
 
   //1D field
   case 1:
-    MPI_Transfer1F_Zplus(D.U,D.numHarmony,N,endI,startI);
+    //MPI_Transfer1F_Zminus(D.U,D.numHarmony,N,startI,endI);
     shiftField_1D(&D,iteration);
-    MPI_Transfer1F_Zminus(D.U,D.numHarmony,N,startI,endI);
+    MPI_Transfer1F_Zplus(D.U,D.numHarmony,N,endI,startI);
 
     break;
   case 3:
@@ -123,7 +123,7 @@ void shiftField_1D(Domain *D,int iteration)
      shiftZ=coef/aveGam/aveGam;
 */
    for(h=0; h<numHarmony; h++)  
-     for(i=endI-1; i>=startI; i--) 
+     for(i=endI; i>=startI; i--) 
        D->U[h][i][0]=D->U[h][i-1][0];
 }
 
