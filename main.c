@@ -114,10 +114,9 @@ int main(int argc, char *argv[])
        	if(D.calChicaneFlag==ON) {
 			   calParticleDelay(&D,iteration);
        	   if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
-   
             if(D.chi_SSON==ON) {
 		   	   selfSeed_Field(&D,iteration);
-					washingOut(&D,iteration);
+					//if(D.chi_washONOFF==ON) washingOut(&D,iteration); else ;
                if(myrank==0) 
                   printf("=============>> self-seeding is performed. at step=%d\n",iteration); 
                else ;
@@ -133,11 +132,6 @@ int main(int argc, char *argv[])
       } else {
 			
 			set_chicane_zero(&D);		
-
-			//if(D.driftFlag==OFF && D.mode==Time_Dependent)
-			//  shiftField(D,iteration);
-			//else ;
-//printf("myrank=%d,iteration=%d, shiftField is done\n",myrank,iteration);
 
       	updateK_quadG(&D,iteration,0);
 //printf("myrank=%d,iteration=%d, 1st updateK is done\n",myrank,iteration);
@@ -171,6 +165,11 @@ int main(int argc, char *argv[])
 //         rearrangeParticles(&D,iteration);
 
 		}	//End of chicaneFlag==OFF
+
+		if(D.driftFlag==OFF && D.mode==Time_Dependent)
+		   shiftField(D,iteration);
+		else ;
+//printf("myrank=%d,iteration=%d, shiftField is done\n",myrank,iteration);
 
       
 

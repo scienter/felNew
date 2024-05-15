@@ -476,12 +476,14 @@ void chicane_test(Domain *D,int iteration)
 		 D->L2=Chi->L2;
 
        D->chi_delay=Chi->delay;
+       // belows are self-seeding option
        D->chi_SSON=Chi->selfSeedON;
        D->chi_d=Chi->d;
        D->bragTh=Chi->bragTh;
        D->extincL=Chi->extincL;
        D->chi0=Chi->chi0;
        D->chi_noiseONOFF=Chi->noiseONOFF;
+       D->chi_washONOFF=Chi->washONOFF;
 	  } else if(x0<=z1 && z1<x1) {
        D->chicaneFlag=ON;
 	  } else ;
@@ -497,4 +499,7 @@ void set_chicane_zero(Domain *D)
   D->L1=0.0;
   D->L2=0.0;
   D->shiftSlice=0;
+  // belows are self-seeding option
+  D->chi_washONOFF=OFF;
+  D->chi_noiseONOFF=ON;
 }

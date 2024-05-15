@@ -66,7 +66,7 @@ void washingOut(Domain *D,int iteration)
 						bn=gsl_ran_gaussian(ran,sigma);
 						noise += an*cos(m*theta)+bn*sin(m*theta);
 			      }
-				   p->theta[n]=theta + noise*noiseONOFF;
+				   p->theta[n]=theta; // + noise*noiseONOFF;
             }
 				p=p->next;
 			}

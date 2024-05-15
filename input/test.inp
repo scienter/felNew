@@ -1,7 +1,7 @@
 
 [Chicane]
  chicane_ONOFF=ON
- delay_time = 14					//[fs]
+ delay_time = 40					//[fs]
  position_z = 51					//[m]
  dipole_length = 0.4				//[m]
  dipole_distance_1 = 1.4		//[m]
@@ -40,9 +40,9 @@
  max_time=3500			//[minute]
 
 // max_step=10
- total_length=120 //50	//[m]
- save_step=10
- save_start=0
+ total_length=60	//[m]
+ save_step=1
+ save_start=103
 
 [Domain]
 
@@ -51,8 +51,8 @@
 // mode=Twiss
  mode=Time_Dependent
 
- minZ=-2			// [um]  For Time_Dependant
- maxZ=3			// [um]  For Time_Dependant
+ minZ=-5			// [um]  For Time_Dependant
+ maxZ=6			// [um]  For Time_Dependant
  minX=-300			// [um]
  maxX=300				// [um]
  minY=-300			// [um]
@@ -66,11 +66,11 @@
  harmony1 = 3
  harmony2 = 5
 
- slices_in_bucket=10
- lambdaUs_in_iteration=10	// number of lambdaU for one iteration
+ slices_in_bucket=20
+ lambdaUs_in_iteration=20	// number of lambdaU for one iteration
 
 [Space_charge]
- activate = OFF
+ activate = ON
  number_fourier_mode = 1
  number_longitudinal_mode = 1
  radial_grids = 100
@@ -87,7 +87,7 @@
  undulator_mode = Linear
  numbers=20
  air=OFF
- linear_taper = -0.0e-4	// [T/undulator]
+ linear_taper = -2.2e-4	// [T/undulator]
  quad_taper = -0.0		// [T/undulator]
  slope_of_B = -0.00		// [T/m]
  lambdaU = 2.6			// [cm]
@@ -114,7 +114,7 @@
  K0 = 0.0			
 
 [Wake_field]
- activate = OFF
+ activate = ON
  shape = Flat
  ac_dc = AC
  radius = 4.5e-3                // [m]
@@ -158,16 +158,16 @@
  number_in_beamlet=4
 
  z_nodes=2
- z0=-2e-6
- z1=2e-6
+ z0=-5e-6
+ z1=5e-6
  z_n0=1
  z_n1=1
 
  energy_nodes=2
  energy_z0=-10e-6
  energy_z1=10e-6
- energy_n0=1.01
- energy_n1=0.99
+ energy_n0=1.00
+ energy_n1=1.00
 
  energySpread_nodes=2
  energySpread_z0=-10e-6
