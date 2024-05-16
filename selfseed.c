@@ -222,7 +222,7 @@ void seed_Field_test(Domain *D,int iteration)
 	chi0=Chi->chi0;
 	k0=D->ks;
    coef=M_PI*M_PI*Chi->d*sinTh/(Chi->extincL*Chi->extincL);	
-   printf("bragg=%g, extincL=%g\n",Chi->bragTh*180/M_PI,extincL);
+   if(myrank==0) printf("bragg=%g, extincL=%g\n",Chi->bragTh*180/M_PI,extincL); else ;
 
    U=(double complex *)malloc(200*sizeof(double complex));
    listJ=(double complex *)malloc(200*sizeof(double complex));

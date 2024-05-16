@@ -25,7 +25,7 @@ void transversePush(Domain *D,int iteration)
 //    particlePush2D(&D,iteration);
     break;
   case 3 :
-//    transversePush_3D(D,iteration);
+    transversePush_3D(D,iteration);
     break;
     
   default :
@@ -46,7 +46,7 @@ void push_theta_gamma(Domain *D,int iteration)
 //    particlePush2D(&D,iteration);
     break;
   case 3 :
-//    push_theta_gamma_3D(D,iteration);
+    push_theta_gamma_3D(D,iteration);
     break;
     
   default :
@@ -54,35 +54,62 @@ void push_theta_gamma(Domain *D,int iteration)
   }
 
 }
+
 
 void drift_theta_gamma(Domain *D,int iteration)
 {
-  switch(D->dimension)  {
-  case 1 :
-    drift_theta_gamma_1D(D,iteration);
-    break;
+   int startI,endI,minI,maxI,sliceI,s,numInBeamlet,n;
+   LoadList *LL;
+   double dz,ks,px,py,invGam,invGam0,wakeE,tmp,invBeta0;
+   ptclList *p;
 
-  case 2 :
-//    particlePush2D(&D,iteration);
-    break;
-  case 3 :
-//    drift_theta_gamma_3D(D,iteration);
-    break;
+   int myrank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+
+   dz=D->dz;    ks=D->ks;
     
-  default :
-    printf("In particlePush, what dimension(%d)?\n",D->dimension);
-  }
+   startI=1;       endI=D->subSliceN+1;
+   minI=D->minI;   maxI=D->maxI;
 
+   invGam0=1.0/D->gamma0;
+	invBeta0=1.0/sqrt(1-invGam0*invGam0);
+
+   if(myrank==0) printf("iteration=%d, drift ON\n",iteration);
+
+   LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      numInBeamlet=LL->numInBeamlet;
+
+      for(sliceI=startI; sliceI<endI; sliceI++)
+      {
+         if(D->wakeONOFF==ON) wakeE=D->wakeE[sliceI-startI+minI]/mc2*1e-6;
+         else                 wakeE=0.0;      
+
+         p=D->particle[sliceI].head[s]->pt;
+         while(p) {
+            for(n=0; n<numInBeamlet; n++) {
+               px=p->px[n];  py=p->py[n];
+               invGam=1.0/p->gamma[n];
+			      tmp=ks*0.5*dz*invBeta0*(invGam0*invGam0-invGam*invGam*(1+px*px+py*py));
+			      p->theta[n]+=tmp;
+               p->gamma[n]-=wakeE*dz;
+            }
+            p=p->next;
+         }   //Enf of while(p)
+      }		//End of for(sliceI)
+      LL=LL->next;
+      s++;
+   }
 }
 
-/*
 void transversePush_3D(Domain *D,int iteration)
 {
-    int i,j,s,sliceI,startI,endI;
+    int i,j,s,sliceI,startI,endI,n,numInBeamlet;
     LoadList *LL;
     double dz,ks,kx,ky,K0,g;
     double x,y,z,px,py,gamma,invGam,v0[2],v1[2],M[2][2];
-    double qx,qy,sqrtQx,sqrtQy,cnt,avePx,avePy,aveGam,send[4],recv[4];
+    double qx,qy,sqrtQx,sqrtQy,send[4],recv[4];
     ptclList *p;
 
     int myrank, nTasks;
@@ -97,92 +124,95 @@ void transversePush_3D(Domain *D,int iteration)
     g=D->g;
     startI=1;  endI=D->subSliceN+1;
 
-    avePx=avePy=aveGam=cnt=0.0;
-    for(sliceI=startI; sliceI<endI; sliceI++)
-    {    
-      for(s=0; s<D->nSpecies; s++)  {
-        p=D->particle[sliceI].head[s]->pt;
-        while(p) {
-       	  gamma=p->gamma;  invGam=1.0/gamma;
+
+    LL=D->loadList;
+    s=0;
+    while(LL->next) {							
+	    numInBeamlet=LL->numInBeamlet;
+
+       for(sliceI=startI; sliceI<endI; sliceI++)
+       {    
+          p=D->particle[sliceI].head[s]->pt;
+          while(p) {
+			    for(n=0; n<numInBeamlet; n++) {
+                gamma=p->gamma[n];  invGam=1.0/gamma;
 	
-          qx=(K0*K0*invGam*kx*kx+eCharge*g/eMass/velocityC)*invGam;
-          qy=(K0*K0*invGam*ky*ky-eCharge*g/eMass/velocityC)*invGam;
-          sqrtQx=sqrt(fabs(qx));
-          sqrtQy=sqrt(fabs(qy));
+                qx=(K0*K0*invGam*kx*kx+eCharge*g/eMass/velocityC)*invGam;
+                qy=(K0*K0*invGam*ky*ky-eCharge*g/eMass/velocityC)*invGam;
+                sqrtQx=sqrt(fabs(qx));
+                sqrtQy=sqrt(fabs(qy));
 
-	  // calculate for x direction
-  	  if(qx>0) {
-            M[0][0]=cos(sqrtQx*dz*0.5);
-            M[0][1]=sin(sqrtQx*dz*0.5)/sqrtQx*invGam;
-            M[1][0]=-gamma*sqrtQx*sin(sqrtQx*dz*0.5);
-            M[1][1]=M[0][0];
-  	  } else if (qx<0) {
-            M[0][0]=cosh(sqrtQx*dz*0.5);
-            M[0][1]=sinh(sqrtQx*dz*0.5)/sqrtQx*invGam;
-            M[1][0]=gamma*sqrtQx*sinh(sqrtQx*dz*0.5);
-            M[1][1]=M[0][0];
-  	  } else {
-            M[0][0]=1.0;
-            M[0][1]=dz*0.5*invGam;
-            M[1][0]=0.0;
-            M[1][1]=1.0;
-  	  }
-          v0[0]=p->x; v0[1]=p->px;
-  	  v1[0]=0.0;  v1[1]=0.0;
-	  for(i=0; i<2; i++)
-	    for(j=0; j<2; j++)
-              v1[i]+=M[i][j]*v0[j];
-          p->x=v1[0];
-          p->px=v1[1];
+                // calculate for x direction
+                if(qx>0) {
+                   M[0][0]=cos(sqrtQx*dz*0.5);
+                   M[0][1]=sin(sqrtQx*dz*0.5)/sqrtQx*invGam;
+                   M[1][0]=-gamma*sqrtQx*sin(sqrtQx*dz*0.5);
+                   M[1][1]=M[0][0];
+                } else if (qx<0) {
+                   M[0][0]=cosh(sqrtQx*dz*0.5);
+                   M[0][1]=sinh(sqrtQx*dz*0.5)/sqrtQx*invGam;
+                   M[1][0]=gamma*sqrtQx*sinh(sqrtQx*dz*0.5);
+                   M[1][1]=M[0][0];
+                } else {
+                   M[0][0]=1.0;
+                   M[0][1]=dz*0.5*invGam;
+                   M[1][0]=0.0;
+                   M[1][1]=1.0;
+                }
+                v0[0]=p->x[n]; v0[1]=p->px[n];
+                v1[0]=0.0;  v1[1]=0.0;
+                for(i=0; i<2; i++)
+                   for(j=0; j<2; j++)
+                      v1[i]+=M[i][j]*v0[j];
+                p->x[n]=v1[0];
+                p->px[n]=v1[1];
 		
-          // calculate for y direction
-  	  if(qy>0) {
-            M[0][0]=cos(sqrtQy*dz*0.5);
-            M[0][1]=sin(sqrtQy*dz*0.5)/sqrtQy*invGam;
-            M[1][0]=-gamma*sqrtQy*sin(sqrtQy*dz*0.5);
-            M[1][1]=M[0][0];
-  	  } else if (qy<0) {
-            M[0][0]=cosh(sqrtQy*dz*0.5);
-            M[0][1]=sinh(sqrtQy*dz*0.5)/sqrtQy*invGam;
-            M[1][0]=gamma*sqrtQy*sinh(sqrtQy*dz*0.5);
-            M[1][1]=M[0][0];
-  	  } else {
-            M[0][0]=1.0;
-            M[0][1]=dz*0.5*invGam;
-            M[1][0]=0.0;
-            M[1][1]=1.0;
-  	  }
-          v0[0]=p->y; v0[1]=p->py;
-  	  v1[0]=0.0;  v1[1]=0.0;
-	  for(i=0; i<2; i++)
-	    for(j=0; j<2; j++)
-              v1[i]+=M[i][j]*v0[j];
-          p->y=v1[0];
-          p->py=v1[1];
+                // calculate for y direction
+                if(qy>0) {
+                   M[0][0]=cos(sqrtQy*dz*0.5);
+                   M[0][1]=sin(sqrtQy*dz*0.5)/sqrtQy*invGam;
+                   M[1][0]=-gamma*sqrtQy*sin(sqrtQy*dz*0.5);
+                   M[1][1]=M[0][0];
+                } else if (qy<0) {
+                   M[0][0]=cosh(sqrtQy*dz*0.5);
+                   M[0][1]=sinh(sqrtQy*dz*0.5)/sqrtQy*invGam;
+                   M[1][0]=gamma*sqrtQy*sinh(sqrtQy*dz*0.5);
+                   M[1][1]=M[0][0];
+                } else {
+                   M[0][0]=1.0;
+                   M[0][1]=dz*0.5*invGam;
+                   M[1][0]=0.0;
+                   M[1][1]=1.0;
+                }
+                v0[0]=p->y[n]; v0[1]=p->py[n];
+                v1[0]=0.0;  v1[1]=0.0;
+                for(i=0; i<2; i++)
+                   for(j=0; j<2; j++)
+                      v1[i]+=M[i][j]*v0[j];
+                p->y[n]=v1[0];
+                p->py[n]=v1[1];
+             }
+             p=p->next;
+          }
+       }		//End of for(sliceI)
 
-	  avePx+=p->px*p->weight;
-	  avePy+=p->py*p->weight;
-	  aveGam+=p->gamma*p->weight;
-	  cnt+=p->weight;
-
-	  p=p->next;
-        }
-      }		//End of for(s)
-    }		//End of for(i)
+       LL=LL->next;
+       s++;
+    }
          
 }
-*/
-/*
+
+
 void push_theta_gamma_3D(Domain *D,int iteration)
 {
-    int i,j,N,ii,jj,s,h,H,numHarmony,nx,ny,order,ll,L,f,F;
-    int startI,endI,minI,maxI,sliceI,indexJ,idx;
+    int i,j,N,ii,jj,s,h,H,numHarmony,nx,ny,order,ll,L,f,F,n,m;
+    int startI,endI,minI,maxI,sliceI,indexJ,idx,numInBeamlet;
     LoadList *LL;
     double complex U[D->numHarmony],compVal,Em[D->SCLmode];
     double dz,dx,dy,ku,ks,kx,ky,K0,K,xi,e_mc2,r,dr,dBessel;
-    double x,y,z,px,py,gamma,theta,invGam,minX,minY,wakeE,invBeta,phi;
+    double x,y,z,px,py,gamma,theta,invGam,minX,minY,wakeE,invBeta;
     double coef,JJ,J1,J2,wx[2],wy[2],sumTh,sumGam,sumEzPart,w[2];
-    double k1,k2,k3,k4,l1,l2,l3,l4,tmp,dPhi,amp,arg,chi;
+    double lkCoef,tmp,dPhi,chi,lList[5],kList[5];
     ptclList *p;
 
     dz=D->dz;    K0=D->K0;
@@ -201,250 +231,121 @@ void push_theta_gamma_3D(Domain *D,int iteration)
     minI=D->minI;   maxI=D->maxI;
     N=D->nx*D->ny;
 
-    for(sliceI=startI; sliceI<endI; sliceI++)
-    {
-      if(D->wakeONOFF==ON) wakeE=D->wakeE[sliceI-startI+minI]/mc2*1e-6;
-      else                wakeE=0.0;      
+  
+    LL=D->loadList;
+    s=0;
+    while(LL->next) {							
+	    numInBeamlet=LL->numInBeamlet;
 
-      for(s=0; s<D->nSpecies; s++)  {
-        p=D->particle[sliceI].head[s]->pt;
-        while(p) {
-          x=p->x;    y=p->y;  r=sqrt(x*x+y*y);
-          px=p->px;  py=p->py;
-		    if(x==0) phi = 0;
-          else     phi = atan2(y,x);
+       for(sliceI=startI; sliceI<endI; sliceI++)
+       {
+          if(D->wakeONOFF==ON) wakeE=D->wakeE[sliceI-startI+minI]/mc2*1e-6;
+          else                wakeE=0.0;      
 
+          p=D->particle[sliceI].head[s]->pt;
+          while(p) {
+             for(n=0; n<numInBeamlet; n++) {
+                x=p->x[n];    y=p->y[n];  r=sqrt(x*x+y*y);
+                px=p->px[n];  py=p->py[n];
+                K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);            
 
-  	       i=(int)((x-minX)/dx);
-	       j=(int)((y-minY)/dy);
-	       if(i>=0 && i<nx-1 && j>=0 && j<ny-1)  {
-			   indexJ = (int)(r/dr);
-				wy[1]=(r/dr-indexJ); wy[0]=1.0-wy[1];
-     			for(ll=0; ll<L; ll++) {
-				  Em[ll]=0.0+I*0.0;
-              for(f=0; f<F; f++) {
-//					 amp=0.0; arg=0.0;
-				    for(jj=0; jj<2; jj++) {
-//				      amp+=cabs(D->Ez[sliceI][indexJ][ll][f])*wy[jj];
-//				      arg+=carg(D->Ez[sliceI][indexJ][ll][f])*wy[jj];
-				      Em[ll]+=D->Ez[sliceI][indexJ][ll][f]*wy[jj];
-					 }
-//				    Em[ll] += amp*cexp(I*(f*phi+arg));
-				  }
-				}
+                i=(int)((x-minX)/dx);
+                j=(int)((y-minY)/dy);
+                if(i>=0 && i<nx-1 && j>=0 && j<ny-1)  {
+                   indexJ = (int)(r/dr);
+                   wy[1]=(r/dr-indexJ); wy[0]=1.0-wy[1];
+                   for(ll=0; ll<L; ll++) {
+                      Em[ll]=0.0+I*0.0;
+                      for(f=0; f<F; f++) 
+                         for(jj=0; jj<2; jj++) 
+                            Em[ll]+=D->Ez[sliceI][indexJ][ll][f]*wy[jj];
+                   }
 
+                   wx[1]=(x-minX)/dx-i; wx[0]=1.0-wx[1];
+                   wy[1]=(y-minY)/dy-j; wy[0]=1.0-wy[1];
+                   for(h=0; h<numHarmony; h++)  {
+                      U[h]=0.0+I*0.0;
+                      for(ii=0; ii<2; ii++) 
+                         for(jj=0; jj<2; jj++)  
+                            U[h]+=D->U[h][sliceI][(j+jj)*nx+(i+ii)]*wx[ii]*wy[jj];
+                   }
 
-       	   wx[1]=(x-minX)/dx-i; wx[0]=1.0-wx[1];
-	         wy[1]=(y-minY)/dy-j; wy[0]=1.0-wy[1];
-	         for(h=0; h<numHarmony; h++)  {
-				
-				  U[h]=0.0+I*0.0;
-	           for(ii=0; ii<2; ii++) 
-                for(jj=0; jj<2; jj++)  
-      			   U[h]+=D->U[h][sliceI][(j+jj)*nx+(i+ii)]*wx[ii]*wy[jj];
-					
-//      		  U[h]=D->U[h][sliceI][(j)*nx+(i)];
-	         }
+					    lList[0]=0;
+                   kList[0]=0;
+                   for(m=1; m<5; m++) {
+					       lkCoef=((int)(m*0.5))*0.5;
+                      theta=p->theta[n]+lkCoef*lList[m-1];
+                      gamma=p->gamma[n]+lkCoef*kList[m-1]; invGam=1.0/gamma;
+                      invBeta = 1.0-(1.0 + K*K + px*px + py*py)*0.5*invGam*invGam;
+                      invBeta = 1.0/invBeta;			 
+                      sumTh=sumGam=0.0;
+                      //xi=ks/ku*0.25*K*K*invGam*invGam;
+                      xi=K*K*0.5/(1+K*K);
+                      for(h=0; h<numHarmony; h++)  {
+                         H = D->harmony[h];
+                         if(H%2==1)  {  //odd harmony
+                            coef=pow(-1.0,(H-1)*0.5);
+                            idx=(int)(H*xi/dBessel);
+                            w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+                            order=(H-1)*0.5;
+                            J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                            order=(H+1)*0.5;
+                            J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                            JJ=coef*(J1-J2);
+                         } else {
+                            //chi = H*sqrt(2.0)*K*ks/ku*px*invGam*invGam;
+                            chi = H*sqrt(2.0)*K*px*2/(1+K*K);
+                            coef=pow(-1.0,(H-2)*0.5);
+                            idx=(int)(H*xi/dBessel);
+                            w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+                            order=(H-2)*0.5;
+                            J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                            order=(H+2)*0.5;
+                            J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                            JJ=chi*0.5*coef*(J1-J2);
+                         }
+                         compVal=U[h]*cexp(I*H*theta);
+                         sumTh -=2*JJ*K*cimag(compVal);
+                         sumGam-=2*JJ*K*creal(compVal);
+                      }
+                      sumEzPart = 0.0;
+                      for(ll=0; ll<L; ll++)  {
+                         tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
+                         sumEzPart += 2.0*tmp;
+                      }
+                      kList[m]=dz*(ku-ks*(1.0+K*K+px*px+py*py+sumTh)*0.5*invGam*invGam)*invBeta;
+                      lList[m]=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
+                   }   //End of for(m)
 
-	         K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-            
-				l2=l3=l4=k2=k3=k4=0.0;
-				// Step 1
-	         theta=p->theta;
-	         gamma=p->gamma; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K + px*px + py*py)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;			 
-            sumTh=sumGam=0.0;
-	         //xi=ks/ku*0.25*K*K*invGam*invGam;
-	         xi=K*K*0.5/(1+K*K);
-            for(h=0; h<numHarmony; h++)  {
-				  H = D->harmony[h];
-              if(H%2==1)  {  //odd harmony
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-              } else {
-                //chi = H*sqrt(2.0)*K*ks/ku*px*invGam*invGam;
-                chi = H*sqrt(2.0)*K*px*2/(1+K*K);
-                coef=pow(-1.0,(H-2)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-2)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+2)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=chi*0.5*coef*(J1-J2);
-              }
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k1=dz*(ku-ks*(1.0+K*K+px*px+py*py+sumTh)*0.5*invGam*invGam)*invBeta;
-	         l1=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-            
-				// Step 2 2 
-	         theta=p->theta+0.5*k1;
-	         gamma=p->gamma+0.5*l1; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K + px*px + py*py)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;			 
-	         xi=K*K*0.5/(1+K*K);
-            sumTh=sumGam=0.0;
-            for(h=0; h<numHarmony; h++)  {
-	           H = D->harmony[h];
-              if(H%2==1)  {  //odd harmony
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-              } else {
-                chi = H*sqrt(2.0)*K*px*2/(1+K*K);
-                coef=pow(-1.0,(H-2)*0.5);
-                idx=(int)(H*xi/dBessel);					 
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-2)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+2)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=chi*0.5*coef*(J1-J2);
-              }
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k2=dz*(ku-ks*(1.0+K*K+px*px+py*py+sumTh)*0.5*invGam*invGam)*invBeta;
-	         l2=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
+                   tmp=dz/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
+                   if(tmp>=dPhi || tmp<=-dPhi) {
+                      printf("iteration=%d, dTheta=%g, r=%g,sumEzPart=%g\n",iteration,tmp,r,sumEzPart); 
+                      exit(0);
+                   } else;
+                   p->theta[n]-=tmp;
+                   p->gamma[n]+=dz/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4])-dz*wakeE;
+                }  // End of for(n)
 
-				// Step 3 
-	         theta=p->theta+0.5*k2;
-	         gamma=p->gamma+0.5*l2; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K + px*px + py*py)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;			 
-	         xi=K*K*0.5/(1+K*K);
-            sumTh=sumGam=0.0;
-            for(h=0; h<numHarmony; h++)  {
-	           H = D->harmony[h];
-              if(H%2==1)  {  //odd harmony
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-              } else {
-                chi = H*sqrt(2.0)*K*px*2/(1+K*K);
-                coef=pow(-1.0,(H-2)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-2)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+2)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=chi*0.5*coef*(J1-J2);
-              }
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k3=dz*(ku-ks*(1.0+K*K+px*px+py*py+sumTh)*0.5*invGam*invGam)*invBeta;
-	         l3=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
+             }     // End of for(m)
+             p=p->next;
+          }		    //End of while(p)
+       }		//End of for(sliceI)
 
-				// Step 4 
-	         theta=p->theta+k3;
-	         gamma=p->gamma+l3; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K + px*px + py*py)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;			 
-	         xi=K*K*0.5/(1+K*K);
-            sumTh=sumGam=0.0;
-            for(h=0; h<numHarmony; h++)  {
-	           H = D->harmony[h];
-              if(H%2==1)  {  //odd harmony
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-              } else {
-                chi = H*sqrt(2.0)*K*px*2/(1+K*K);
-                coef=pow(-1.0,(H-2)*0.5);
-                idx=(int)(H*xi/dBessel);
-					 w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-2)*0.5;
-					 J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+2)*0.5;
-					 J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=chi*0.5*coef*(J1-J2);
-              }
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k4=dz*(ku-ks*(1.0+K*K+px*px+py*py+sumTh)*0.5*invGam*invGam)*invBeta;
-	         l4=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-
-            tmp=1.0/6.0*(k1+2*k2+2*k3+k4);
-	         if(tmp>=dPhi || tmp<=-dPhi) {
-              printf("iteration=%d, dTheta=%g, r=%g,sumEzPart=%g\n",iteration,tmp,r,sumEzPart); 
-              exit(0);
-	         } else;
-            p->theta+=tmp;
-            p->gamma+=1.0/6.0*(l1+2*l2+2*l3+l4)-dz*wakeE;
-
-	       } else ;
-
-	       p=p->next;
-        }
-      }		//End of for(s)
-    }		//End of for(sliceI)
-
+       LL=LL->next;
+       s++;
+    }       //End of while(LL)
 }
-*/
 
 
 void push_theta_gamma_1D(Domain *D,int iteration)
 {
-    int n,i,s,h,H,numHarmony,order,startI,endI,minI,maxI,ll,L,idx,intThe,bn,*N;
+    int numHarmony,order,startI,endI,minI,maxI;
+    int n,i,s,h,H,ll,L,idx,intThe,bn,m,numInBeamlet;
     LoadList *LL;
     double complex U[D->numHarmony],Em[D->SCLmode],compVal;
     double dz,ku,ks,K0,K,xi,e_mc2,dBessel,w[2];
     double z,gamma,theta,invGam,invBeta,tmp,dPhi,sumGam,sumTh,sumEzPart,prevThe;
-    double coef,JJ,J1,J2,wakeE,absU,absU2;
-    double k1,k2,k3,k4,l1,l2,l3,l4;
-	 double beta1,beta2,beta3,beta4;
-	 double sumGam1,sumGam2,sumGam3,sumGam4;
+    double coef,lkCoef,JJ,J1,J2,wakeE,kList[5],lList[5];
     ptclList *p;
     int myrank;
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
@@ -460,239 +361,78 @@ void push_theta_gamma_1D(Domain *D,int iteration)
     e_mc2 = eCharge/eMass/velocityC/velocityC;	 
 	 bn=D->bn;
 
-    N=(int *)malloc(D->nSpecies*sizeof(int ));
     LL=D->loadList;
     s=0;
     while(LL->next) {
-       N[s]=LL->numInBeamlet;
+       numInBeamlet=LL->numInBeamlet;
+
+       for(i=startI; i<endI; i++)
+       {
+          if(D->wakeONOFF==ON) wakeE=D->wakeE[i-startI+minI]/mc2*1e-6;
+          else                 wakeE=0.0;      
+
+          for(ll=0; ll<L; ll++) Em[ll]=D->Ez[i][0][ll][0];
+
+          for(h=0; h<numHarmony; h++)  U[h]=D->U[h][i][0];
+      
+          K=K0;
+          p=D->particle[i].head[s]->pt;
+          while(p) {
+             for(n=0; n<numInBeamlet; n++) {
+				    kList[0]=0.0;
+				    lList[0]=0.0;
+                for(m=1; m<5; m++) {
+					    lkCoef=((int)(m*0.5))*0.5;
+                   theta=p->theta[n] + lkCoef*kList[m-1];
+                   gamma=p->gamma[n] + lkCoef*lList[m-1]; invGam=1.0/gamma;
+                   invBeta = 1.0-(1.0 + K*K)*0.5*invGam*invGam;
+                   invBeta = 1.0/invBeta;
+                   sumTh=sumGam=0.0;
+                   //xi=ks/ku*0.25*K*K*invGam*invGam;
+                   xi=K*K*0.5/(1+K*K);
+                   for(h=0; h<numHarmony; h++)  {
+			             H = D->harmony[h];
+			             if(H%2==1) {
+                         coef=pow(-1.0,(H-1)*0.5);
+                         idx=(int)(H*xi/dBessel);
+                         if(idx>bn-1) { printf("idx=%d\n",idx); idx=bn-2; }
+                         w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+                         order=(H-1)*0.5;
+                         J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                         order=(H+1)*0.5;
+                         J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                         JJ=coef*(J1-J2);
+				          } else JJ=0.0;
+                      compVal=U[h]*cexp(I*H*theta);
+                      sumTh -=2*JJ*K*cimag(compVal);
+                      sumGam-=2*JJ*K*creal(compVal);
+                   }
+                   sumEzPart = 0.0;
+                   for(ll=0; ll<L; ll++)  {
+                      tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
+                      sumEzPart += 2.0*tmp;
+                   }
+                   kList[m]=dz*(ku-ks*(1.0+K*K+sumTh)*0.5*invGam*invGam)*invBeta;
+                   lList[m]=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
+					 }  //End of for(m)
+
+                tmp=dz/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
+                if(tmp>dPhi || tmp<-dPhi) { 
+                   printf("iteration=%d, dTheta=%g, sumEzPart=%g, U[0]=%g\n",iteration,tmp,sumEzPart,cabs(D->U[0][i][0]));  //lala
+                   exit(0);
+                } else ;
+                p->theta[n]-=tmp;
+                p->gamma[n]+=dz/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4]) - wakeE*dz;
+             }   //End of for(n)
+
+	          p=p->next;
+          }      //End of while(p)
+       }	        //End of for(i)
        LL=LL->next;
        s++;
     }
-
-    for(i=startI; i<endI; i++)
-    {
-      if(D->wakeONOFF==ON) wakeE=D->wakeE[i-startI+minI]/mc2*1e-6;
-      else                 wakeE=0.0;      
-
-      for(ll=0; ll<L; ll++) 
-		  Em[ll]=D->Ez[i][0][ll][0];
-
-      for(h=0; h<numHarmony; h++)  
-		  U[h]=D->U[h][i][0];
-      
-      for(s=0; s<D->nSpecies; s++)  {
-        p=D->particle[i].head[s]->pt;
-
-        while(p) {
-          for(n=0; n<N[s]; n++) {
-            K=K0;
-
-            theta=p->theta[n];
-            gamma=p->gamma[n]; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;
-            sumTh=sumGam=0.0;
-            //xi=ks/ku*0.25*K*K*invGam*invGam;
-	         xi=K*K*0.5/(1+K*K);
-            for(h=0; h<numHarmony; h++)  {
-			     H = D->harmony[h];
-			     if(H%2==1) {
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-                if(idx>bn-1) { printf("idx=%d\n",idx); idx=bn-2; }
-                w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-                J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-                J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-				  } else JJ=0.0;
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k1=dz*(ku-ks*(1.0+K*K+sumTh)*0.5*invGam*invGam)*invBeta;
-            l1=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-			 
-	         theta=p->theta[n]+0.5*k1;
-            gamma=p->gamma[n]+0.5*l1; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;
-            sumTh=sumGam=0.0;
-	         xi=K*K*0.5/(1+K*K);
-            for(h=0; h<numHarmony; h++)  {
-			     H = D->harmony[h];
-			     if(H%2==1) {
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-				    if(idx>bn-1) { printf("idx=%d\n",idx); idx=bn-2; }
-                w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-                J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-                J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-				  } else JJ=0.0;
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k2=dz*(ku-ks*(1.0+K*K+sumTh)*0.5*invGam*invGam)*invBeta;
-            l2=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-
-	         theta=p->theta[n]+0.5*k2;
-            gamma=p->gamma[n]+0.5*l2; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;
-            sumTh=sumGam=0.0;
-	         xi=K*K*0.5/(1+K*K);
-            for(h=0; h<numHarmony; h++)  {
-			     H = D->harmony[h];
-			     if(H%2==1) {
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-				    if(idx>bn-1) { printf("idx=%d\n",idx); idx=bn-2; }
-                w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-                J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-                J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-				  } else JJ=0.0;
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k3=dz*(ku-ks*(1.0+K*K+sumTh)*0.5*invGam*invGam)*invBeta;
-            l3=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-
-	         theta=p->theta[n]+k3;
-            gamma=p->gamma[n]+l3; invGam=1.0/gamma;
-            invBeta = 1.0-(1.0 + K*K)*0.5*invGam*invGam;
-            invBeta = 1.0/invBeta;
-            sumTh=sumGam=0.0;
-	         xi=K*K*0.5/(1+K*K);
-            for(h=0; h<numHarmony; h++)  {
-			     H = D->harmony[h];
-			     if(H%2==1) {
-                coef=pow(-1.0,(H-1)*0.5);
-                idx=(int)(H*xi/dBessel);
-				    if(idx>bn-1) { printf("idx=%d\n",idx); idx=bn-2; }
-                w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-                order=(H-1)*0.5;
-                J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                order=(H+1)*0.5;
-                J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-                JJ=coef*(J1-J2);
-				  } else JJ=0.0;
-              compVal=U[h]*cexp(I*H*theta);
-              sumTh -=2*JJ*K*cimag(compVal);
-              sumGam-=2*JJ*K*creal(compVal);
-            }
-            sumEzPart = 0.0;
-            for(ll=0; ll<L; ll++)  {
-              tmp=creal(Em[ll]*cexp(I*(ll+1)*theta));
-              sumEzPart += 2.0*tmp;
-            }
-            k4=dz*(ku-ks*(1.0+K*K+sumTh)*0.5*invGam*invGam)*invBeta;
-            l4=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
-
-            tmp=dz/6.0*(k1+2*k2+2*k3+k4);
-	         if(tmp>dPhi || tmp<-dPhi) { 
-              printf("iteration=%d, dTheta=%g, sumEzPart=%g, U[0]=%g\n",iteration,tmp,sumEzPart,cabs(D->U[0][i][0]));  //lala
-              exit(0);
-            }
-            p->theta[n]-=tmp;
-            p->gamma[n]+=dz/6.0*(l1+2*l2+2*l3+l4) - wakeE*dz;
-          }   //End of for(n)
-
-	       p=p->next;
-        }
-      }		//End of for(s)
-    }		//End of for(i)
-
-   free(N);
 }
 
-
-/*
-void drift_theta_gamma_3D(Domain *D,int iteration)
-{
-   int i,j,N,ii,jj,s,h,H,numHarmony,nx,ny,order,ll,L,f,F;
-   int startI,endI,minI,maxI,sliceI,indexJ,idx;
-   LoadList *LL;
-   double complex U[D->numHarmony];
-   double dz,dx,dy,ks,kx,ky,K0,K,xi,e_mc2,r,dr;
-   double x,y,z,px,py,gamma,invGam,minX,minY,wakeE;
-   double coef,JJ,J1,J2,wx[2],wy[2],w[2],dPhi;
-   ptclList *p;
-
-   dz=D->dz;    K0=D->K0;   ks=D->ks;
-   numHarmony=D->numHarmony;
-   dx=D->dx; dy=D->dy;
-   nx=D->nx; ny=D->ny;
-   kx=D->kx; ky=D->ky;
-   minX=D->minX;  minY=D->minY;
-   dPhi=2*M_PI*D->numSlice;
-   e_mc2 = eCharge/eMass/velocityC/velocityC;	 
-    
-   startI=1;       endI=D->subSliceN+1;
-   minI=D->minI;   maxI=D->maxI;
-   
-   for(sliceI=startI; sliceI<endI; sliceI++)
-   {
-     if(D->wakeONOFF==ON) wakeE=D->wakeE[sliceI-startI+minI]/mc2*1e-6;
-     else                wakeE=0.0;      
-
-     for(s=0; s<D->nSpecies; s++)  {
-       p=D->particle[sliceI].head[s]->pt;
-       while(p) {
-         x=p->x;    y=p->y;  r=sqrt(x*x+y*y);
-         px=p->px;  py=p->py;
-
-	      K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-
-  	      i=(int)((x-minX)/dx);
-	      j=(int)((y-minY)/dy);
-	      if(i>=0 && i<nx-1 && j>=0 && j<ny-1)  {
-
-       	  wx[1]=(x-minX)/dx-i; wx[0]=1.0-wx[1];
-	        wy[1]=(y-minY)/dy-j; wy[0]=1.0-wy[1];
-	        for(h=0; h<numHarmony; h++)  {				
-			    U[h]=0.0+I*0.0;
-	          for(ii=0; ii<2; ii++) 
-               for(jj=0; jj<2; jj++)  
-      	        U[h]+=D->U[h][sliceI][(j+jj)*nx+(i+ii)]*wx[ii]*wy[jj];					
-	        }
-
-	        gamma=p->gamma; invGam=1.0/gamma;
-			  p->theta-=ks*0.5*invGam*invGam*(1+px*px+py*py)*dz;
-           p->gamma-=wakeE*dz;
-
-	      } else ;
-
-	      p=p->next;
-       }
-     }		//End of for(s)
-   }		//End of for(sliceI)
-
-}
-*/
 
 void drift_theta_gamma_1D(Domain *D,int iteration)
 {

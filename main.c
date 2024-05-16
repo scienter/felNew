@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     FILE *out;
     Domain D; 
     LoadList *LL; 
+    ChiList *Chi;
     hid_t file_id;
     int myrank, nTasks;
     MPI_Status status; 
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
  
 //    removeFile(&D);
 
-    //loadSeed(&D,iteration);
+    loadSeed(&D,iteration);
 
     if(myrank==0) testK_quadG(&D); else ;
     MPI_Barrier(MPI_COMM_WORLD);
@@ -73,7 +74,8 @@ int main(int argc, char *argv[])
     wakeFunction(&D,iteration);
 //printf("myrank=%d,iteration=%d, wakefunction is done\n",myrank,iteration);
     
-    seed_Field_test(&D,iteration);
+    Chi=D.chiList;
+    if(Chi->selfSeedON==ON) seed_Field_test(&D,iteration); else ;
 
 	 shiftZ=0.0;
     while(iteration<D.maxStep) 
@@ -128,7 +130,7 @@ int main(int argc, char *argv[])
 		      }
 			} else ;
       	
-			//transversePush(&D,iteration);
+			transversePush(&D,iteration);
       } else {
 			
 			set_chicane_zero(&D);		
@@ -142,8 +144,7 @@ int main(int argc, char *argv[])
       	//} else ;
 //printf("myrank=%d,iteration=%d, calculate_twiss is done\n",myrank,iteration);
 
-
-      	//transversePush(&D,iteration);
+      	transversePush(&D,iteration);
 //printf("myrank=%d,iteration=%d, 1st transversePush is done\n",myrank,iteration);
 
       	updateK_quadG(&D,iteration,0.5);
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
 			else                 drift_theta_gamma(&D,iteration); 
 //printf("myrank=%d,iteration=%d, push_theta_gamma is done\n",myrank,iteration);
 
-      	//transversePush(&D,iteration);
+      	transversePush(&D,iteration);
 //printf("myrank=%d,iteration=%d, 2st transversePush is done\n",myrank,iteration);
 
       	//phase shifter

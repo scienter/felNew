@@ -14,7 +14,27 @@ void solve_Sc_3D(Domain *D,int iteration);
 void solve_Field_U_1D(Domain *D,int iteration);
 void solve_Field_U_3D(Domain *D,int iteration);
 void MPI_Transfer1F_Z(double complex ***f1,int harmony,int N,int fromI,int toI);
-//void doubleMPI_Transfer1F_Zplus(double ***f1,int harmony,int N,int fromI,int toI);
+void MPI_Transfer1F_Zplus(double complex ***f1,int harmony,int N,int fromI,int toI);
+
+
+void shiftField(Domain D,int iteration)
+{
+   int h,numHarmony,i,j,startI,endI,N;
+
+   N=D.nx*D.ny;
+   numHarmony=D.numHarmony;
+   startI=1;  endI=D.subSliceN+1;
+
+   for(i=endI; i>=startI; i--) 
+      for(h=0; h<numHarmony; h++)  
+         for(j=0; j<N; j++) 
+            D.U[h][i][j]=D.U[h][i-1][j];
+    
+	MPI_Transfer1F_Zplus(D.U,D.numHarmony,N,endI,startI);
+}
+
+
+
 
 void solveField(Domain D,int iteration)
 {
@@ -35,8 +55,8 @@ void solveField(Domain D,int iteration)
     solve_Field_U_1D(&D,iteration);
     break;
   case 3:
-    //solve_Sc_3D(&D,iteration);
-    //solve_Field_U_3D(&D,iteration);
+    solve_Sc_3D(&D,iteration);
+    solve_Field_U_3D(&D,iteration);
     break;
 
   default:
@@ -44,7 +64,7 @@ void solveField(Domain D,int iteration)
   }
 }
 
-/*
+
 void solve_Field_U_3D(Domain *D,int iteration)
 {
    int h,H,numHarmony,i,j,sliceI,startI,endI,ii;  
@@ -73,56 +93,54 @@ void solve_Field_U_3D(Domain *D,int iteration)
       B[i]=(double complex *)malloc(nx*sizeof(double complex));
 
    for(h=0; h<numHarmony; h++)  {
-	  H = D->harmony[h];
-     alpha=-I*dz*0.25/(H*ks)/dx/dx;
-  	  beta=-I*dz*0.25/(H*ks)/dy/dy;
+      H = D->harmony[h];
+      alpha=-I*dz*0.25/(H*ks)/dx/dx;
+  	   beta=-I*dz*0.25/(H*ks)/dy/dy;
 
-     diagB = (1-2*alpha)/alpha;
-	  rList[0]=1;
-	  rList[1]=-diagB;
-     for(i=2; i<nx; i++)
-	    rList[i] = -1*(diagB*rList[i-1]+rList[i-2]);
-     invR = 1.0/(diagB*rList[nx-1]+rList[nx-2]);
+      diagB = (1-2*alpha)/alpha;
+	   rList[0]=1;
+	   rList[1]=-diagB;
+      for(i=2; i<nx; i++)
+	      rList[i] = -1*(diagB*rList[i-1]+rList[i-2]);
+      invR = 1.0/(diagB*rList[nx-1]+rList[nx-2]);
 
-     for(i=0; i<nx; i++)
-       for(j=i; j<nx; j++) {
-		   compVal = rList[i]*rList[nx-1-j];
-			B[i][j] = compVal*invR;
-			B[j][i] = compVal*invR;
-		 }
-	
-     for(sliceI=startI; sliceI<endI; sliceI++) {
-//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
-       j=0;
-       for(i=0; i<nx; i++)
-         SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j+1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
-       for(i=0; i<nx; i++) {
-		   compVal=0+I*0;
-         for(ii=0; ii<nx; ii++) 
-			  compVal+=B[i][j]*SList[ii];
-	      D->Uc[h][sliceI][j*nx+i]=compVal;
-		 }
-		 
-       for(j=1; j<ny-1; j++) {
-         for(i=0; i<nx; i++)
-           SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*(D->U[h][sliceI][(j-1)*nx+i]+D->U[h][sliceI][(j+1)*nx+i])+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
-         for(i=0; i<nx; i++) {
-  	        compVal=0+I*0;
-           for(ii=0; ii<nx; ii++) 
-			    compVal+=B[i][j]*SList[ii];
-	        D->Uc[h][sliceI][j*nx+i]=compVal;
+      for(i=0; i<nx; i++)
+         for(j=i; j<nx; j++) {
+	         compVal = rList[i]*rList[nx-1-j];
+            B[i][j] = compVal*invR;
+            B[j][i] = compVal*invR;
 		   }
-       }
-       j=ny-1;
-       for(i=0; i<nx; i++)
-         SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
-       for(i=0; i<nx; i++) {
-  	      compVal=0+I*0;
-         for(ii=0; ii<nx; ii++) 
-		     compVal+=B[i][j]*SList[ii];
-	      D->Uc[h][sliceI][j*nx+i]=compVal;
-		 }
-	  }
+	
+      for(sliceI=startI; sliceI<endI; sliceI++) {
+//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
+         j=0;
+            for(i=0; i<nx; i++)
+               SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j+1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
+            for(i=0; i<nx; i++) {
+		         compVal=0+I*0;
+               for(ii=0; ii<nx; ii++) compVal+=B[i][j]*SList[ii];
+               D->Uc[h][sliceI][j*nx+i]=compVal;
+            }
+		 
+         for(j=1; j<ny-1; j++) {
+            for(i=0; i<nx; i++)
+               SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*(D->U[h][sliceI][(j-1)*nx+i]+D->U[h][sliceI][(j+1)*nx+i])+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
+            for(i=0; i<nx; i++) {
+  	            compVal=0+I*0;
+               for(ii=0; ii<nx; ii++) compVal+=B[i][j]*SList[ii];
+               D->Uc[h][sliceI][j*nx+i]=compVal;
+		      }
+         }
+
+         j=ny-1;
+            for(i=0; i<nx; i++)
+               SList[i]=((1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/alpha;
+            for(i=0; i<nx; i++) {
+  	            compVal=0+I*0;
+               for(ii=0; ii<nx; ii++) compVal+=B[i][j]*SList[ii];
+               D->Uc[h][sliceI][j*nx+i]=compVal;
+		      }
+	   }
    }
    free(rList);
    free(SList);
@@ -137,70 +155,64 @@ void solve_Field_U_3D(Domain *D,int iteration)
       B[i]=(double complex *)malloc(ny*sizeof(double complex));
 
    for(h=0; h<numHarmony; h++)  {
-	  H = D->harmony[h];
-     alpha=-I*dz*0.25/(H*ks)/dx/dx;
-  	  beta=-I*dz*0.25/(H*ks)/dy/dy;
+	   H = D->harmony[h];
+      alpha=-I*dz*0.25/(H*ks)/dx/dx;
+  	   beta=-I*dz*0.25/(H*ks)/dy/dy;
 
-     diagB = -1*(1+2*beta)/beta;
-	  rList[0]=1;
-	  rList[1]=-diagB;
-     for(i=2; i<ny; i++)
-	    rList[i] = -1*(diagB*rList[i-1]+rList[i-2]);
-     invR = 1.0/(diagB*rList[ny-1]+rList[ny-2]);
+      diagB = -1*(1+2*beta)/beta;
+	   rList[0]=1;
+	   rList[1]=-diagB;
+      for(i=2; i<ny; i++)
+	      rList[i] = -1*(diagB*rList[i-1]+rList[i-2]);
+      invR = 1.0/(diagB*rList[ny-1]+rList[ny-2]);
 
-     for(i=0; i<ny; i++)
-       for(j=i; j<ny; j++) {
-		   compVal = rList[i]*rList[ny-1-j];
-			B[i][j] = compVal*invR;
-			B[j][i] = compVal*invR;
-		 }
-	
-     for(sliceI=startI; sliceI<endI; sliceI++) {
-//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
-       i=0;
-       for(j=0; j<ny; j++)
-         SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
-       for(j=0; j<ny; j++) {
-		   compVal=0+I*0;
-         for(ii=0; ii<ny; ii++) 
-			  compVal+=B[i][j]*SList[ii];
-	      D->U[h][sliceI][j*nx+i]=compVal;
-		 }		 
-       for(i=1; i<nx-1; i++) {
-         for(j=0; j<ny; j++)
-           SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*(D->Uc[h][sliceI][j*nx+(i-1)]+D->Uc[h][sliceI][j*nx+(i+1)])+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
-         for(j=0; j<ny; j++) {
-  	        compVal=0+I*0;
-           for(ii=0; ii<ny; ii++) 
-			    compVal+=B[i][j]*SList[ii];
-	        D->U[h][sliceI][j*nx+i]=compVal;
+      for(i=0; i<ny; i++)
+         for(j=i; j<ny; j++) {
+		      compVal = rList[i]*rList[ny-1-j];
+			   B[i][j] = compVal*invR;
+			   B[j][i] = compVal*invR;
 		   }
-       }
-       i=nx-1;
-       for(j=0; j<ny; j++)
-         SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
-       for(j=0; j<ny; j++) {
-  	      compVal=0+I*0;
-         for(ii=0; ii<ny; ii++) 
-		     compVal+=B[i][j]*SList[ii];
-	      D->U[h][sliceI][j*nx+i]=compVal;
-		 }
-	  }
+	
+      for(sliceI=startI; sliceI<endI; sliceI++) {
+//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
+         i=0;
+            for(j=0; j<ny; j++)
+               SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
+            for(j=0; j<ny; j++) {
+		         compVal=0+I*0;
+               for(ii=0; ii<ny; ii++) compVal+=B[i][j]*SList[ii];
+               D->U[h][sliceI][j*nx+i]=compVal;
+		      }		 
+         for(i=1; i<nx-1; i++) {
+            for(j=0; j<ny; j++)
+               SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*(D->Uc[h][sliceI][j*nx+(i-1)]+D->Uc[h][sliceI][j*nx+(i+1)])+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
+            for(j=0; j<ny; j++) {
+  	            compVal=0+I*0;
+               for(ii=0; ii<ny; ii++) compVal+=B[i][j]*SList[ii];
+               D->U[h][sliceI][j*nx+i]=compVal;
+		      }
+         }
+         i=nx-1;
+            for(j=0; j<ny; j++)
+               SList[j]=((1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag)/beta;
+            for(j=0; j<ny; j++) {
+  	            compVal=0+I*0;
+					for(ii=0; ii<ny; ii++) compVal+=B[i][j]*SList[ii];
+               D->U[h][sliceI][j*nx+i]=compVal;
+		      }
+	   }
    }
 
    free(rList);
    free(SList);
    for(i=0; i<ny; i++) free(B[i]);
-	free(B);
-
-	
+	free(B);	
 }
-*/
-/*
+
 void solve_Sc_3D(Domain *D,int iteration)
 {
    int sliceI,i,j,ii,jj,s,h,H,numHarmony,order,nx,ny,N;  
-   int startI,endI,nSpecies,idx;
+   int startI,endI,idx,n,numInBeamlet;
    double coef,tmp,J1,J2,K,K0,xi,macro,invG,JJ,amp,arg,dBessel,chi; 
    double kx,ky,x,y,dx,dy,dz,theta,minX,minY,wx[2],wy[2],ks,ku,w[2];
    double complex macro_K_invG_expTheta_coef,tmpComp;
@@ -212,9 +224,14 @@ void solve_Sc_3D(Domain *D,int iteration)
    MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
+   int l,f,L,F,nr;
+   double complex coefComp;
+   double phi,r,k0,dr,Lc,Lm,Lp,reLc,reLm,prevReLc,prevReLm,prevReLc_Lp,gamma0,alpha;
+   double *cc;
+   double complex ***Sc,*dd;
+
    startI=1; endI=D->subSliceN+1;
    numHarmony=D->numHarmony;
-   nSpecies=D->nSpecies;
 
    minX=D->minX;	minY=D->minY;
    nx=D->nx;   ny=D->ny;
@@ -223,197 +240,182 @@ void solve_Sc_3D(Domain *D,int iteration)
    kx=D->kx; ky=D->ky;
 	ks=D->ks; ku=D->ku;
 	dBessel = D->dBessel;
-
-   coef=dz*eCharge*eCharge*mu0*0.25/eMass/D->ks/(D->lambda0*D->numSlice)/dx/dy;
+   gamma0 = D->gamma0;
 
    N=nx*ny;   
    for(h=0; h<numHarmony; h++)
-     for(i=0; i<=endI; i++)
-       for(j=0; j<N; j++) 
-         D->ScU[h][i][j]=0.0+I*0.0;
-
-   for(sliceI=startI; sliceI<endI; sliceI++)
-   {
-     for(s=0; s<nSpecies; s++) {
-       p=D->particle[sliceI].head[s]->pt;		 
-
-       while(p) {
-         x=p->x;  y=p->y;   theta=p->theta;
-         macro=p->weight;   invG=1.0/p->gamma;
-
-         K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-
-         xi=ks*K*K*0.25*invG*invG/ku;
-         i=(int)((x-minX)/dx);
-         j=(int)((y-minY)/dy);
-         wx[1]=(x-minX)/dx-i;   wx[0]=1.0-wx[1];
-         wy[1]=(y-minY)/dy-j;   wy[0]=1.0-wy[1];	  
-         if(i>=0 && i<nx && j>=0 && j<ny)  {
-           for(h=0; h<numHarmony; h++)  {
-				 H = D->harmony[h];
-             macro_K_invG_expTheta_coef=macro*K*coef*cexp(-I*H*theta)*invG;
-             if(H%2==1)  {  //odd harmony
-               tmp=pow(-1.0,(H-1)*0.5);
-               idx=(int)(H*xi/dBessel);
-					w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-               order=(H-1)*0.5;
-					J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-               order=(H+1)*0.5;
-					J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-	            JJ=tmp*(J1-J2);
-	          } else {
-               chi = H*sqrt(2.0)*K*ks/ku*p->px*invG*invG;
-//               chi = H*K*ks/ku*p->px*invG*invG;
-               tmp=pow(-1.0,(H-2)*0.5);
-               idx=(int)(H*xi/dBessel);
-					w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
-               order=(H-2)*0.5;
-					J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-               order=(H+2)*0.5;
-					J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
-	            JJ=tmp*chi*0.5*(J1-J2);
-             }
-
-	          for(ii=0; ii<2; ii++)
-               for(jj=0; jj<2; jj++) {
-                 D->ScU[h][sliceI][(j+jj)*nx+(i+ii)]+=wx[ii]*wy[jj]*JJ*macro_K_invG_expTheta_coef;
-               }
-	       
-	        }		//End of harmony
-         } else ;	//End of for(i,j)
-
-         p=p->next;
-       }
-
-     }
-   }		//End of for(sliceI)
-
-
-   // Calculate Ez space charge
-   int l,f,L,F,nr;
-	double complex coefComp;
-   double phi,r,k0,dr,Lc,Lm,Lp,reLc,reLm,prevReLc,prevReLm,prevReLc_Lp,gamma0,alpha;
-	double *cc;
-	double complex ***Sc,*dd;
+      for(i=0; i<=endI; i++)
+         for(j=0; j<N; j++) 
+            D->ScU[h][i][j]=0.0+I*0.0;
 
    F = D->SCFmode;         L = D->SCLmode;
-	nr = D->nr;	           dr = D->dr;  
+   nr = D->nr;	           dr = D->dr;  
    ku = D->ku;            k0 = D->ks;
-	gamma0 = D->gamma0;
-   for(i=0; i<=endI; i++)
-     for(j=0; j<nr; j++) 
-	    for(l=0; l<L; l++)
-	      for(f=0; f<F; f++)
-           D->Ez[i][j][l][f]=0.0+I*0.0;
-
-
-
-
-   if(D->SCONOFF == OFF) ;
-	else {
-     cc = (double *)malloc(nr*sizeof(double ));
-     dd = (double complex *)malloc(nr*sizeof(double complex ));
-
-     Sc = (double complex ***)malloc(nr*sizeof(double complex **));
-	  for(j=0; j<nr; j++) {
-       Sc[j] = (double complex **)malloc(L*sizeof(double complex *));
-       for(l=0; l<L; l++) {
+   cc = (double *)malloc(nr*sizeof(double ));
+   dd = (double complex *)malloc(nr*sizeof(double complex ));
+   Sc = (double complex ***)malloc(nr*sizeof(double complex **));
+   for(j=0; j<nr; j++) {
+      Sc[j] = (double complex **)malloc(L*sizeof(double complex *));
+      for(l=0; l<L; l++) 
          Sc[j][l] = (double complex *)malloc(F*sizeof(double complex ));
-       }
-     }
+   }
 
-     coef=eCharge*velocityC*velocityC*mu0*ku/(1+K0*K0)/M_PI/dr/dr/(D->lambda0*D->numSlice);
+   coef=dz*eCharge*eCharge*mu0*0.25/eMass/D->ks/(D->lambda0*D->numSlice)/dx/dy;
 
-     for(i=startI; i<endI; i++)
-     {
-       for(j=0; j<nr; j++)
-         for(l=0; l<L; l++)
-           for(f=0; f<F; f++)
-             Sc[j][l][f]=0.0+I*0.0;
-		
-       for(s=0; s<nSpecies; s++) {	  
-         p=D->particle[i].head[s]->pt;
+   LL=D->loadList;
+   s=0;
+   while(LL->next) {
+      numInBeamlet=LL->numInBeamlet;
+
+      for(sliceI=startI; sliceI<endI; sliceI++)
+      {
+         p=D->particle[sliceI].head[s]->pt;		 
          while(p) {
-           x=p->x;  y=p->y;   theta=p->theta;
-           macro=p->weight;   invG=1.0/p->gamma;
-		     if(x==0) phi = 0;
-           else     phi = atan2(y,x);
+            macro=p->weight;
+            for(n=0; n<numInBeamlet; n++) {
+               x=p->x[n];  y=p->y[n];   theta=p->theta[n];
+               invG=1.0/p->gamma[n];
 
-           K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-			  r = sqrt(x*x+y*y);
-           j=(int)(r/dr+0.5);
-			  wy[1]=r/dr-(int)(r/dr);  wy[0]=1.0-wy[1];
-			  if(j>0 && j<nr) {
-             for(l=0; l<L; l++) 
-               for(f=0; f<F; f++) {
-                 coefComp=I*coef*cexp(-I*(l+1)*theta-I*f*phi)*macro*(1+K*K)*(l+1)/(2.0*j);
-//				     Sc[j][l][f]+=coefComp;
-					  for(jj=0; jj<2; jj++)
-				       Sc[j+jj][l][f]+=coefComp*wy[jj];
-               }
-			  }
+               K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
+               xi=ks*K*K*0.25*invG*invG/ku;
+               i=(int)((x-minX)/dx);
+               j=(int)((y-minY)/dy);
+               wx[1]=(x-minX)/dx-i;   wx[0]=1.0-wx[1];
+               wy[1]=(y-minY)/dy-j;   wy[0]=1.0-wy[1];	  
+               if(i>=0 && i<nx && j>=0 && j<ny)  {
+                  for(h=0; h<numHarmony; h++)  {
+				         H = D->harmony[h];
+                     macro_K_invG_expTheta_coef=macro*K*coef*cexp(-I*H*theta)*invG;
+                     if(H%2==1)  {  //odd harmony
+                        tmp=pow(-1.0,(H-1)*0.5);
+                        idx=(int)(H*xi/dBessel);
+                        w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+                        order=(H-1)*0.5;
+				            J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                        order=(H+1)*0.5;
+                        J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                        JJ=tmp*(J1-J2);
+                     } else {
+                        chi = H*sqrt(2.0)*K*ks/ku*p->px[n]*invG*invG;
+                        //chi = H*K*ks/ku*p->px*invG*invG;
+                        tmp=pow(-1.0,(H-2)*0.5);
+                        idx=(int)(H*xi/dBessel);
+                        w[1]=(H*xi/dBessel)-idx; w[0]=1.0-w[1];
+                        order=(H-2)*0.5;
+                        J1=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                        order=(H+2)*0.5;
+                        J2=D->BesselJ[idx][order]*w[0]+D->BesselJ[idx+1][order]*w[1];
+                        JJ=tmp*chi*0.5*(J1-J2);
+                     }
+
+                     for(ii=0; ii<2; ii++)
+                        for(jj=0; jj<2; jj++) 
+                           D->ScU[h][sliceI][(j+jj)*nx+(i+ii)]+=wx[ii]*wy[jj]*JJ*macro_K_invG_expTheta_coef;
+                  }		//End of harmony
+               } else ;	//End of if(i,j)
+            }	         //End of for(n)
+            p=p->next;
+         }              //End of while(p)
+      }		//End of for(sliceI)
+
+
+      //Calculate Ez space charge
+
+      for(i=0; i<=endI; i++)
+         for(j=0; j<nr; j++) 
+	         for(l=0; l<L; l++)
+	            for(f=0; f<F; f++)
+                  D->Ez[i][j][l][f]=0.0+I*0.0;
+
+      if(D->SCONOFF == OFF) ;
+	   else {
+
+         coef=eCharge*velocityC*velocityC*mu0*ku/(1+K0*K0)/M_PI/dr/dr/(D->lambda0*D->numSlice);
+
+         for(i=startI; i<endI; i++)
+         {
+            for(j=0; j<nr; j++)
+               for(l=0; l<L; l++)
+                  for(f=0; f<F; f++)
+                     Sc[j][l][f]=0.0+I*0.0;
+		
+            p=D->particle[i].head[s]->pt;
+            while(p) {
+               macro=p->weight;
+               for(n=0; n<numInBeamlet; n++) {
+                  x=p->x[n];  y=p->y[n];   theta=p->theta[n];
+                  invG=1.0/p->gamma[n];
+                  if(x==0) phi = 0;
+                  else     phi = atan2(y,x);
+
+                  K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
+                  r = sqrt(x*x+y*y);
+                  j=(int)(r/dr+0.5);
+                  wy[1]=r/dr-(int)(r/dr);  wy[0]=1.0-wy[1];
+                  if(j>0 && j<nr) {
+                     for(l=0; l<L; l++) 
+                        for(f=0; f<F; f++) {
+                           coefComp=I*coef*cexp(-I*(l+1)*theta-I*f*phi)*macro*(1+K*K)*(l+1)/(2.0*j);
+					            for(jj=0; jj<2; jj++) Sc[j+jj][l][f]+=coefComp*wy[jj];
+                        }
+			         }
+               }    //End of for(n)
             
-           p=p->next;
-         }
-       }	//End of for(s)
+               p=p->next;
+            }       //End of while(p)
 
+            // recalculate 
+            for(l=0; l<L; l++)
+               for(f=0; f<F; f++)  {
+                  j = nr-1;
+                     y = j*dr; x=0.0;			      
+                     K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
+                     alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
+                     Lc = -1.0/(dr*dr*j)*(2*j + f*f*log((j+0.5)/(j-0.5))) - alpha;
+                     Lm = 1.0/(dr*dr*j)*(j-0.5);
+                     cc[j]=Lm/Lc;
+                     dd[j]=Sc[j][l][f];
 
-       // recalculate 
-       for(l=0; l<L; l++)
-         for(f=0; f<F; f++)  {
+                  for(j=nr-2; j>=1; j--)  {
+			            y = j*dr; x=0.0;			      
+                     K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
+                     alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
+                     Lp = 1.0/(dr*dr*j)*(j+0.5);
+                     Lc = -1.0/(dr*dr*j)*(2*j + f*f*log((j+0.5)/(j-0.5))) - alpha;
+                     cc[j]=Lm/(Lc-Lp*cc[j+1]);
+                     dd[j]=(Sc[j][l][f]-Lp*dd[j+1])/(Lc-Lp*cc[j+1]);
+			         }
 
-		     j = nr-1;
-			    y = j*dr; x=0.0;			      
-             K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-             alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
-			    Lc = -1.0/(dr*dr*j)*(2*j + f*f*log((j+0.5)/(j-0.5))) - alpha;
-			    Lm = 1.0/(dr*dr*j)*(j-0.5);
-			    cc[j]=Lm/Lc;
-			    dd[j]=Sc[j][l][f];
+                  j=0;
+                     y = j*dr; x=0.0;			      
+                     K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
+                     alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
+                     Lp = 2.0/(dr*dr);
+                     Lc = -2.0/(dr*dr) - alpha;
+                     cc[j]=0.0;
+                     dd[j]=(Sc[j][l][f]-Lp*dd[j+1])/(Lc-Lp*cc[j+1]);
 
-           for(j=nr-2; j>=1; j--)  {
-			    y = j*dr; x=0.0;			      
-             K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-             alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
-			    Lp = 1.0/(dr*dr*j)*(j+0.5);
-			    Lc = -1.0/(dr*dr*j)*(2*j + f*f*log((j+0.5)/(j-0.5))) - alpha;
-			    cc[j]=Lm/(Lc-Lp*cc[j+1]);
-			    dd[j]=(Sc[j][l][f]-Lp*dd[j+1])/(Lc-Lp*cc[j+1]);
-			  }
+                  j=0;
+                     D->Ez[i][j][l][f] = dd[j];
+                  for(j=1; j<nr; j++)
+		               D->Ez[i][j][l][f] = dd[j]-cc[j]*D->Ez[i][j-1][l][f];
+		         }   //End of for(f)
+         }		//End of for(i)
 
-			  j=0;
-			    y = j*dr; x=0.0;			      
-             K=K0*(1.0+kx*kx*x*x+ky*ky*y*y);
-             alpha = 2.0*(l+1)*(l+1)*k0*ku*(1+K*K)/(1+K0*K0);
-			    Lp = 2.0/(dr*dr);
-			    Lc = -2.0/(dr*dr) - alpha;
-			    cc[j]=0.0;
-			    dd[j]=(Sc[j][l][f]-Lp*dd[j+1])/(Lc-Lp*cc[j+1]);
+      }   //End of if(SCONOFF==ON)
+  
+      LL=LL->next;
+      s++;
+   }
 
-		     j=0;
-		       D->Ez[i][j][l][f] = dd[j];
-           for(j=1; j<nr; j++)
-		       D->Ez[i][j][l][f] = dd[j]-cc[j]*D->Ez[i][j-1][l][f];
-		     
-			}
-
-     }		//End of for(i)
-
-
-     for(j=0; j<nr; j++) {
-       for(l=0; l<L; l++) {
-         free(Sc[j][l]);
-       }
-       free(Sc[j]);
-	  }
-     free(Sc);
-	  free(cc);
-	  free(dd);
-
-   }   //End of if(SCONOFF==ON)
-   
+   for(j=0; j<nr; j++) {
+      for(l=0; l<L; l++) free(Sc[j][l]);
+      free(Sc[j]);
+   }
+   free(Sc);
+   free(cc);
+   free(dd);
 }
-*/
 
 void solve_Field_U_1D(Domain *D,int iteration)
 {
