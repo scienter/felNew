@@ -107,90 +107,73 @@ void selfSeed_Field(Domain *D,int iteration)
 	k0=D->ks;
    coef=M_PI*M_PI*d*sinTh/(extincL*extincL);	
 
-
-	dataNum=D->numHarmony*N*(sliceN+2);
+	dataNum=N*(sliceN+2);
    sendData=(double *)malloc(dataNum*sizeof(double ));
    recvData=(double *)malloc(dataNum*sizeof(double ));
    U=(double *)malloc(dataNum*sizeof(double ));
 	for(i=0; i<dataNum; i++) U[i]=0.0;
    numSlice=sliceN+2;
 
-   for(h=0; h<1; h++) 
-     for(i=startI; i<endI; i++) 
-	  {
-       shiftT=(sliceN - (minI+i-startI))*dt + delayT;
+   for(i=startI; i<endI; i++) 
+	{
+      shiftT=(sliceN - (minI+i-startI))*dt + delayT;
 
-       for(j=0; j<N; j++) 
-		 {
+      for(j=0; j<N; j++) 
+		{
          val=cabs(D->U[h][i][j]);
 		  
          for(nn=1; nn<numSlice; nn++) {
-           tau = shiftT-(nn-1)*dt;
-			  if(tau>=0) {
-             ctau=velocityC*tau;
+            tau = shiftT-(nn-1)*dt;
+			   if(tau>=0) {
+               ctau=velocityC*tau;
+               tmp=ctau*(2.0*d/sinTh+ctau/sinTh/sinTh);
+	            if(tmp==0.0) J=0.5;
+	            //else if(tmp<0) {
+		         //  arg=M_PI/extincL*sqrt(fabs(tmp));
+		         //  J=gsl_sf_bessel_I1(arg); J/=arg;
+				   //  J*=-I;
+			      //} 
+				   else {
+			         arg=M_PI/extincL*sqrt(tmp);
+			         J=gsl_sf_bessel_J1(arg); J/=arg;
+			      }
 
-             tmp=ctau*(2.0*d/sinTh+ctau/sinTh/sinTh);
-	          if(tmp==0.0) J=0.5;
-	          //else if(tmp<0) {
-		       //  arg=M_PI/extincL*sqrt(fabs(tmp));
-		       //  J=gsl_sf_bessel_I1(arg); J/=arg;
-				 //  J*=-I;
-			    //} 
-				 else {
-			      arg=M_PI/extincL*sqrt(tmp);
-			      J=gsl_sf_bessel_J1(arg); J/=arg;
-			    }
-
-             //tmp=cabs(chi0)*k0*(d+ctau/sinTh)/2.0/sinTh;
-             //first=cexp(I*tmp);  //ver 3
-             //result=coef*first*J*compVal;
-             result=coef*J*val;
-             U[h*numSlice*N + (nn-1)*N + j]+=result*dt*velocityC;
-             //U[h*numSlice*N*2 + (nn-1)*(N*2) + j*2 + 1]+=cimag(result)*dt*velocityC;
-			  } else ;
+               //tmp=cabs(chi0)*k0*(d+ctau/sinTh)/2.0/sinTh;
+               //first=cexp(I*tmp);  //ver 3
+               //result=coef*first*J*compVal;
+               result=coef*J*val;
+               U[(nn-1)*N + j]+=result*dt*velocityC;
+			   } else ;
          }
-		 }
-	  }
+		}
+	}
 	 
-
    for(i=0; i<dataNum; i++) sendData[i]=U[i];
-
    if(myrank==0)  {
-     for(rank=1; rank<nTasks; rank++) {
-       MPI_Recv(recvData,dataNum,MPI_DOUBLE,rank,rank,MPI_COMM_WORLD,&status);
-		 for(i=0; i<dataNum; i++)
-		   U[i]+=recvData[i];
-     }
+      for(rank=1; rank<nTasks; rank++) {
+         MPI_Recv(recvData,dataNum,MPI_DOUBLE,rank,rank,MPI_COMM_WORLD,&status);
+		   for(i=0; i<dataNum; i++)  U[i]+=recvData[i];
+      }
 	} else {
-     for(rank=1; rank<nTasks; rank++) {
-	    if(myrank==rank) 
-         MPI_Send(sendData,dataNum,MPI_DOUBLE,0,myrank,MPI_COMM_WORLD);
-     }
+      for(rank=1; rank<nTasks; rank++) {
+	      if(myrank==rank) MPI_Send(sendData,dataNum,MPI_DOUBLE,0,myrank,MPI_COMM_WORLD);
+      }
 	}
    MPI_Barrier(MPI_COMM_WORLD);
    MPI_Bcast(U,dataNum,MPI_DOUBLE,0,MPI_COMM_WORLD);
 
-/*
-   out=fopen("conField","w");
-	for(n=1; n<sliceN+1; n++) {
-	  tau=(n-1)*dt;
-	  fprintf(out,"%g %g\n",tau,cabs(data[n]));
-	}
-	fclose(out);
-	printf("'conField' is made.\n");
-*/
-   for(h=0; h<numHarmony; h++) 
-     for(i=startI; i<endI; i++) {
-       nn=minI+i;
-       ctau = (shiftT-(nn-1)*dt)*velocityC;
-       tmpComp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
-       for(j=0; j<N; j++) { 
-         //realV=U[h*numSlice*N*2 + nn*(N*2) + j*2 + 0];
-         //imagV=U[h*numSlice*N*2 + nn*(N*2) + j*2 + 1];
-         val=U[h*numSlice*N + nn*N + j];
-         D->U[h][i][j]=val*cexp(I*tmp);
-		 }
-     }
+   h=0;
+      for(i=startI; i<endI; i++) {
+         nn=minI+i;
+         ctau = (shiftT-(nn-1)*dt)*velocityC;
+         tmpComp=chi0*k0*(d+ctau/sinTh)/2.0/sinTh;
+         for(j=0; j<N; j++) { 
+            //realV=U[h*numSlice*N*2 + nn*(N*2) + j*2 + 0];
+            //imagV=U[h*numSlice*N*2 + nn*(N*2) + j*2 + 1];
+            val=U[nn*N + j];
+            D->U[h][i][j]=val*cexp(I*tmp);
+		   }
+      }
 
    free(U);
 	free(sendData);

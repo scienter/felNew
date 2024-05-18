@@ -25,14 +25,14 @@ void loadBeam(Domain D,LoadList *LL,int s,int iteration)
 //    loadPolygonPlasma2D(D,LL,s,iteration); 
     break;
   case 3:
-    //loadBeam3D(&D,LL,s,iteration);
+    loadBeam3D(&D,LL,s,iteration);
     break;
   default:
     ;
   }
 }
 
-/*
+
 void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
 {
    int l,b,n,m,numInBeamlet,beamlets,noiseONOFF,flag1,flag2;
@@ -72,8 +72,6 @@ void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
      max_beta = tmp*(tmp/L+1)/sqrt(tmp*tmp/L/L-1);
 	  if (myrank==0) printf("Recommandations : quad g=%g, cen_beta=%g, min_beta=%g, max_beta=%g\n",g,beta0,min_beta,max_beta);
 	}
-
-
 
    dPhi=2.0*M_PI*D->numSlice;
    div=2.0*M_PI/(1.0*numInBeamlet);
@@ -160,56 +158,50 @@ void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
        delTY=distanceY/vz;	//normalized
      }
 
-
      beamlets=(int)(LL->numBeamlet*n0);
      remacro=macro*(1.0*LL->numBeamlet)/(1.0*beamlets)*n0;
 
      eNumbers=remacro*numInBeamlet;
 	  if(eNumbers<10) eNumbers=10; else;
 
-     index=0;
      for(b=0; b<beamlets; b++)  {
-       if(index>=D->numSlice) index=0; else ;
-
         gsl_qrng_get(q1,v1);
 
-        r1=v1[0]; if(r1==0.0) r1=1e-4;          r2=v1[1];
+        r1=v1[0];  if(r1==0.0)  r1=1e-4;        r2=v1[1];
         pr1=v1[2]; if(pr1==0.0) pr1=1e-4;       pr2=v1[3];
-        th=v1[4];	          gam=v1[5];  if(gam==0.0) gam=1e-4;
+        th=v1[4];	 gam=v1[5];   if(gam==0.0) gam=1e-4;
 	     th+=randTh;
 		  tmpInt=(int)th;
 		  th-=tmpInt;
 
-        if(LL->transFlat==OFF) {
-          coef=sqrt(-2.0*log(r1));
-          x=coef*cos(2*M_PI*r2);
-          x*=sigX;
-          y=coef*sin(2*M_PI*r2);
-          y*=sigY;
+        if(LL->transFlat==OFF) {        //Transverse Flat
+           coef=sqrt(-2.0*log(r1));
+           x=coef*cos(2*M_PI*r2);
+           x*=sigX;
+           y=coef*sin(2*M_PI*r2);
+           y*=sigY;
 
-          coef=sqrt(-2.0*log(pr1));
-          xPrime=coef*cos(2*M_PI*pr2);
-          xPrime*=sigXPrime;
-          yPrime=coef*sin(2*M_PI*pr2);
-          yPrime*=sigYPrime;
-        }  else  {
-          coef=sqrt(r1);
-          x=coef*cos(2*M_PI*r2);
-	       x*=sigX;
-          y=coef*sin(2*M_PI*r2);
-	       y*=sigY;
+           coef=sqrt(-2.0*log(pr1));
+           xPrime=coef*cos(2*M_PI*pr2);
+           xPrime*=sigXPrime;
+           yPrime=coef*sin(2*M_PI*pr2);
+           yPrime*=sigYPrime;
+        }  else  {                       //Transverse Gaussian 
+           coef=sqrt(r1);
+           x=coef*cos(2*M_PI*r2);
+	        x*=sigX;
+           y=coef*sin(2*M_PI*r2);
+	        y*=sigY;
 
-          coef=sqrt(pr1);
-          xPrime=coef*cos(2*M_PI*pr2);
-          xPrime*=sigXPrime;
-          yPrime=coef*sin(2*M_PI*pr2);
-	       yPrime*=sigYPrime;
+           coef=sqrt(pr1);
+           xPrime=coef*cos(2*M_PI*pr2);
+           xPrime*=sigXPrime;
+           yPrime=coef*sin(2*M_PI*pr2);
+	        yPrime*=sigYPrime;
         }
 
         tmp=sqrt(-2.0*log(gam))*cos(v1[6]*2*M_PI);
 		  gam=gamma0+dGam*tmp*ESn0;
-
-		  //theta0=(th*0.999)*(dPhi-2*M_PI);
 		  theta0=th*dPhi;
 
         pz=sqrt((gam*gam-1.0)/(1.0+xPrime*xPrime+yPrime*yPrime));
@@ -219,39 +211,38 @@ void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
         x-=delTX*px/gam;
         y-=delTY*py/gam;
 
+        New = (ptclList *)malloc(sizeof(ptclList));
+        New->next = D->particle[i].head[s]->pt;
+        D->particle[i].head[s]->pt = New;
+
+        New->weight=remacro;
+        New->index=LL->index;  	//index
+        New->core=myrank;  	
+
+        New->x=(double *)malloc(numInBeamlet*sizeof(double ));
+        New->y=(double *)malloc(numInBeamlet*sizeof(double ));
+        New->px=(double *)malloc(numInBeamlet*sizeof(double ));
+        New->py=(double *)malloc(numInBeamlet*sizeof(double ));
+        New->theta=(double *)malloc(numInBeamlet*sizeof(double ));
+        New->gamma=(double *)malloc(numInBeamlet*sizeof(double ));
+
         for(n=0; n<numInBeamlet; n++)  {		     
-          New = (ptclList *)malloc(sizeof(ptclList));
-          New->next = D->particle[i].head[s]->pt;
-          D->particle[i].head[s]->pt = New;
+           New->x[n] = x;  New->y[n] = y;
+           New->px[n] = px;  New->py[n] = py;
+           New->gamma[n]=gam;
 
-          New->x = x;
-          New->y = y;
-
-          theta=theta0+n*div;
-          noise=0.0;
-          for(m=1; m<=numInBeamlet/2; m++) {
-            sigma=sqrt(2.0/eNumbers/(m*m*1.0));	//harmony is 1.
-  	         an=gsl_ran_gaussian(ran,sigma);
-            bn=gsl_ran_gaussian(ran,sigma);
-            noise += an*cos(m*theta)+bn*sin(m*theta);
-          }
-          tmp=theta + noise*noiseONOFF;
-
-          if(tmp>dPhi) tmp-=dPhi; 
-	       else if(tmp<0) tmp+=dPhi;
-	       else ;
-          New->theta=tmp;
-	     
-          New->gamma=gam;
-          New->px=px;
-          New->py=py;   	
-          New->weight=remacro;
-          New->index=LL->index;  	//index
-          New->core=myrank;  	
-          LL->index+=1;
+           theta=theta0+n*div;
+           noise=0.0;
+           for(m=1; m<=numInBeamlet/2; m++) {
+              sigma=sqrt(2.0/eNumbers/(m*m*1.0));	//harmony is 1.
+  	           an=gsl_ran_gaussian(ran,sigma);
+              bn=gsl_ran_gaussian(ran,sigma);
+              noise += an*cos(m*theta)+bn*sin(m*theta);
+           }
+           tmp=theta + noise*noiseONOFF;
+           New->theta[n]=tmp;	     
         }		// End for (n)
-
-	     index++;
+        LL->index+=1;
      }	//End for (b)
    }     //End for (i)
    gsl_qrng_free(q1);
@@ -260,7 +251,7 @@ void loadBeam3D(Domain *D,LoadList *LL,int s,int iteration)
 
 
 }
-*/
+
 
 void loadBeam1D(Domain *D,LoadList *LL,int s,int iteration)
 {

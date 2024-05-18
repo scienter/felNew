@@ -64,7 +64,158 @@ void solveField(Domain D,int iteration)
   }
 }
 
+void solve_Field_U_3D(Domain *D,int iteration)
+{
+   int h,H,numHarmony,i,j,sliceI,startI,endI;  
+   int n,nx,ny;
+   double ks,dx,dy,dz,currentFlag;
+   double complex alpha,beta,later,*CC,*DD,*dd;
+   int myrank, nTasks;
+   MPI_Status status;
 
+   MPI_Comm_size(MPI_COMM_WORLD, &nTasks);
+   MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+
+   startI=1;   endI=D->subSliceN+1;
+   numHarmony=D->numHarmony;
+
+   dx=D->dx;  dy=D->dy;  dz=D->dz;
+   ks=D->ks;
+   nx=D->nx;  ny=D->ny;
+	currentFlag=D->currentFlag;
+
+   // first step
+   CC=(double complex *)malloc(nx*sizeof(double complex));
+   DD=(double complex *)malloc(nx*sizeof(double complex));
+   dd=(double complex *)malloc(nx*sizeof(double complex));
+
+   for(h=0; h<numHarmony; h++)  {
+      H = D->harmony[h];
+      alpha=-I*dz*0.25/(ks)/dx/dx;
+      beta=-I*dz*0.25/(ks)/dy/dy;
+      CC[0]=alpha/(1.0-2*alpha);
+      for(sliceI=startI; sliceI<endI; sliceI++) {
+//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
+         for(j=1; j<ny-1; j++) {
+            for(i=0; i<nx; i++)
+               dd[i]=-beta*D->U[h][sliceI][(j+1)*nx+i]+(1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
+	         DD[0]=dd[0]/(1.0-2*alpha);
+            for(i=1; i<nx; i++) {
+               CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
+               DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
+	         }
+	         i=nx-1;
+	            later=DD[i];
+	            D->Uc[h][sliceI][j*nx+i]=later;
+	         for(i=nx-2; i>=0; i--) {
+	            later=DD[i]-CC[i]*later;
+	            D->Uc[h][sliceI][j*nx+i]=later;
+            }
+         }
+         j=0;
+            for(i=0; i<nx; i++) 
+               dd[i]=-beta*D->U[h][sliceI][(j+1)*nx+i]+(1+2*beta)*D->U[h][sliceI][j*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
+            DD[0]=dd[0]/(1.0-2*alpha);
+            for(i=1; i<nx; i++) {
+               CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
+               DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
+            }
+	         i=nx-1;
+               later=DD[i];
+               D->Uc[h][sliceI][j*nx+i]=later;
+            for(i=nx-2; i>=0; i--) {
+               later=DD[i]-CC[i]*later;
+               D->Uc[h][sliceI][j*nx+i]=later;
+            }
+         j=ny-1;
+            for(i=0; i<nx; i++) 
+               dd[i]=(1+2*beta)*D->U[h][sliceI][j*nx+i]-beta*D->U[h][sliceI][(j-1)*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag; 
+            DD[0]=dd[0]/(1.0-2*alpha);
+            for(i=1; i<nx; i++) {
+               CC[i]=alpha/(1-2*alpha-alpha*CC[i-1]);
+               DD[i]=(dd[i]-alpha*DD[i-1])/(1-2*alpha-alpha*CC[i-1]);
+            }
+            i=nx-1;
+               later=DD[i];
+               D->Uc[h][sliceI][j*nx+i]=later;
+            for(i=nx-2; i>=0; i--) {
+               later=DD[i]-CC[i]*later;
+               D->Uc[h][sliceI][j*nx+i]=later;
+            }
+      }       //End of for(sliceI)
+   }
+   free(CC); 
+   free(DD);
+   free(dd);
+
+   // second step
+   CC=(double complex *)malloc(ny*sizeof(double complex));
+   DD=(double complex *)malloc(ny*sizeof(double complex));
+   dd=(double complex *)malloc(ny*sizeof(double complex));
+
+   for(h=0; h<numHarmony; h++)  {
+	   H = D->harmony[h];
+      alpha=-I*dz*0.25/(ks)/dx/dx;
+      beta=-I*dz*0.25/(ks)/dy/dy;
+      CC[0]=beta/(1-2*beta);
+      for(sliceI=startI; sliceI<endI; sliceI++) {
+//       memcpy(&(D->tmpU[0]),&(D->U[h][sliceI][0]),nx*ny*sizeof(double complex ));
+         for(i=1; i<nx-1; i++) {
+            for(j=0; j<ny; j++) 
+               dd[j]=-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
+               DD[0]=dd[0]/(1-2*beta);
+            for(j=1; j<ny; j++) {
+               CC[j]=beta/(1-2*beta-beta*CC[j-1]);
+               DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
+            }
+            j=ny-1;
+               later=DD[j];
+               D->U[h][sliceI][j*nx+i]=later;
+            for(j=ny-2; j>=0; j--) {
+               later=DD[j]-CC[j]*later;
+               D->U[h][sliceI][j*nx+i]=later;
+            }
+         }
+         i=0;
+            for(j=0; j<ny; j++) 
+               dd[j]=-alpha*D->Uc[h][sliceI][j*nx+(i+1)]+(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
+            DD[0]=dd[0]/(1-2*beta);
+            for(j=1; j<ny; j++) {
+               CC[j]=beta/(1-2*beta-beta*CC[j-1]);
+               DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
+            }
+            j=ny-1;
+               later=DD[j];
+               D->U[h][sliceI][j*nx+i]=later;
+            for(j=ny-2; j>=0; j--) {
+               later=DD[j]-CC[j]*later;
+               D->U[h][sliceI][j*nx+i]=later;
+            }
+         i=nx-1;
+            for(j=0; j<ny; j++) 
+               dd[j]=(1+2*alpha)*D->Uc[h][sliceI][j*nx+i]-alpha*D->Uc[h][sliceI][j*nx+(i-1)]+D->ScU[h][sliceI][j*nx+i]*currentFlag;
+	         DD[0]=dd[0]/(1-2*beta);
+            for(j=1; j<ny; j++) {
+               CC[j]=beta/(1-2*beta-beta*CC[j-1]);
+               DD[j]=(dd[j]-beta*DD[j-1])/(1-2*beta-beta*CC[j-1]);
+            }
+         j=ny-1;
+            later=DD[j];
+            D->U[h][sliceI][j*nx+i]=later;
+         for(j=ny-2; j>=0; j--) {
+            later=DD[j]-CC[j]*later;
+            D->U[h][sliceI][j*nx+i]=later;
+         }
+      }
+   }
+   free(CC); 
+   free(DD);
+   free(dd);
+
+}
+
+
+/*    Matrix method but it is very slow.
 void solve_Field_U_3D(Domain *D,int iteration)
 {
    int h,H,numHarmony,i,j,sliceI,startI,endI,ii;  
@@ -208,6 +359,7 @@ void solve_Field_U_3D(Domain *D,int iteration)
    for(i=0; i<ny; i++) free(B[i]);
 	free(B);	
 }
+*/
 
 void solve_Sc_3D(Domain *D,int iteration)
 {

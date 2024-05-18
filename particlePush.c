@@ -532,44 +532,49 @@ double Runge_Kutta_gamma(double complex *U,double theta,double harmony,double ks
   return (k1/6.0+k2/3.0+k3/3.0+k4/6.0)*dz;
 }
 
-/*
+
 void phaseShift(Domain *D,int iteration)
 {
-	 int s,i,sliceI,startI,endI;
-	 double shiftValue,theta;
-    LoadList *LL;
-    ptclList *p;
-	 PhaseShifter *PS;
-    int myrank, nTasks;
-    MPI_Status status;
-	 MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-	 MPI_Comm_size(MPI_COMM_WORLD, &nTasks); 
+   int s,i,sliceI,startI,endI,n,numInBeamlet;
+	double shiftValue,theta;
+   LoadList *LL;
+   ptclList *p;
+	PhaseShifter *PS;
 
-    startI=1;       endI=D->subSliceN+1;
+   int myrank, nTasks;
+   MPI_Status status;
+	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+	MPI_Comm_size(MPI_COMM_WORLD, &nTasks); 
 
-    PS=D->psList;
-    while(PS->next) {
+   startI=1;       endI=D->subSliceN+1;
+
+   PS=D->psList;
+   while(PS->next) {
       for(i=0; i<PS->num; i++) {
-        if(iteration==PS->step[i]) {
-          shiftValue=PS->phase;
-          if(myrank==0) printf("phase shift with %g is done at step%d.\n",shiftValue,iteration);  else ;
+         if(iteration==PS->step[i]) {
+            shiftValue=PS->phase;
+            if(myrank==0) printf("phase shift with %g is done at step%d.\n",shiftValue,iteration);  else ;
 
-          for(sliceI=startI; sliceI<endI; sliceI++)  {
-            for(s=0; s<D->nSpecies; s++)  {
-              p=D->particle[sliceI].head[s]->pt;
-              while(p) {
-			       theta=p->theta;
-                p->theta=theta-shiftValue;
+            LL=D->loadList;
+            s=0;
+            while(LL->next) {
+               numInBeamlet=LL->numInBeamlet;
 
-	             p=p->next;
-              }
-            }		//End of for(s)
-          }		//End of for(sliceI)
-
-		  } else ;
+               for(sliceI=startI; sliceI<endI; sliceI++)  {
+                  p=D->particle[sliceI].head[s]->pt;
+                  while(p) {
+                     for(n=0; n<numInBeamlet; n++) p->theta[n]-=shiftValue;
+                     p=p->next;
+                  }
+               }		//End of for(sliceI)
+    
+               LL=LL->next;
+               s++;
+            }
+         } else ;
 	   }
-		PS=PS->next;
-	 }
 
+      PS=PS->next;
+   }
 }
-*/
+
