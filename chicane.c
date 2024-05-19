@@ -81,7 +81,7 @@ void rearrangeChicaneParticle(Domain *D)
     particle=D->particle;
 
     int i,s,ii,intZ,cnt,deleteFlag,shiftFlag,domainShiftFlag,dataCnt;
-    int l,rank,startI,endI,nSpecies,minI,maxI,indexI,n,numInBeamlet;
+    int l,rank,startI,endI,nSpecies,minI,maxI,indexI,n,*N;
     double dPhi,theta,aveTh,delTh;
 	 int *sendN,*recvN,*start,*cntN;
 	 double **sendData,**recvData;
@@ -101,24 +101,27 @@ void rearrangeChicaneParticle(Domain *D)
 
     sendN=(int *)malloc(nTasks*sizeof(int ));
     recvN=(int *)malloc(nTasks*sizeof(int ));
-    recvData=(double **)malloc(nTasks*sizeof(double *));
-    sendData=(double **)malloc(nTasks*sizeof(double *));
-    cntN=(int *)malloc(nTasks*sizeof(int ));
 
+    N=(int *)malloc(D->nSpecies*sizeof(int ));
     LL=D->loadList;
     s=0;
     while(LL->next) {
-       numInBeamlet=LL->numInBeamlet;
+       N[s]=LL->numInBeamlet;
+       LL=LL->next;
+       s++;
+    }
 
-       dataCnt=6*numInBeamlet+4;
+    for(s=0; s<nSpecies; s++) 
+	 {
+       dataCnt=6*N[s]+4;
        for(i=0; i<nTasks; i++) { sendN[i]=0; recvN[i]=0; }
 
 	    for(i=startI; i<endI; i++)   {
           p=particle[i].head[s]->pt;
 	       while(p)  {
 			    aveTh=0.0;
-			    for(n=0; n<numInBeamlet; n++) aveTh+=p->theta[n];
-				 aveTh/=1.0*numInBeamlet;
+			    for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
+				 aveTh/=1.0*N[s];
 
       	    if(aveTh>=dPhi)  intZ=(int)(aveTh/dPhi);
          	 else if(aveTh<0) intZ=((int)(aveTh/dPhi))-1;
@@ -126,9 +129,9 @@ void rearrangeChicaneParticle(Domain *D)
  
    	       indexI=i-startI+minI+intZ;
       	    for(rank=0; rank<nTasks; rank++) {
-         	    if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
-					    if(rank!=myrank)  sendN[rank]+=1; else ;
-					    rank=nTasks;
+         	   if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
+					  if(rank!=myrank)  sendN[rank]+=1; else ;
+					  rank=nTasks;
 					} else ;
 				 }
 			    p=p->next;
@@ -146,11 +149,14 @@ void rearrangeChicaneParticle(Domain *D)
 	    }
 	    MPI_Barrier(MPI_COMM_WORLD);
 
+       recvData=(double **)malloc(nTasks*sizeof(double *));
+       sendData=(double **)malloc(nTasks*sizeof(double *));
        for(rank=0; rank<nTasks; rank++)   {
           sendData[rank]=(double *)malloc(sendN[rank]*dataCnt*sizeof(double ));
           recvData[rank]=(double *)malloc(recvN[rank]*dataCnt*sizeof(double ));
        }
        
+       cntN=(int *)malloc(nTasks*sizeof(int ));
        for(rank=0; rank<nTasks; rank++) cntN[rank]=0; 
        for(i=startI; i<endI; i++)
        {
@@ -164,8 +170,8 @@ void rearrangeChicaneParticle(Domain *D)
 			    domainShiftFlag=OFF;
 
 			    aveTh=0.0;
-			    for(n=0; n<numInBeamlet; n++) aveTh+=p->theta[n];
-			    aveTh/=1.0*numInBeamlet;
+			    for(n=0; n<N[s]; n++) aveTh+=p->theta[n];
+			    aveTh/=1.0*N[s];
              if(aveTh>=dPhi)  {
                 intZ=(int)(aveTh/dPhi);
                 delTh=dPhi*intZ;
@@ -192,7 +198,7 @@ void rearrangeChicaneParticle(Domain *D)
                 if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
 				       if(myrank!=rank) {
 						    domainShiftFlag=ON;
-				          for(n=0; n<numInBeamlet; n++) {
+				          for(n=0; n<N[s]; n++) {
                          sendData[rank][cntN[rank]*dataCnt+n*6+0]=p->theta[n]-delTh;
                          sendData[rank][cntN[rank]*dataCnt+n*6+1]=p->x[n];
                          sendData[rank][cntN[rank]*dataCnt+n*6+2]=p->y[n];
@@ -200,16 +206,17 @@ void rearrangeChicaneParticle(Domain *D)
                          sendData[rank][cntN[rank]*dataCnt+n*6+4]=p->px[n];
                          sendData[rank][cntN[rank]*dataCnt+n*6+5]=p->py[n];
 				          }
-                      sendData[rank][cntN[rank]*dataCnt+numInBeamlet*6+0]=p->weight;
-                      sendData[rank][cntN[rank]*dataCnt+numInBeamlet*6+1]=p->index;
-                      sendData[rank][cntN[rank]*dataCnt+numInBeamlet*6+2]=p->core;
-                      sendData[rank][cntN[rank]*dataCnt+numInBeamlet*6+3]=indexI;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+0]=p->weight;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+1]=p->index;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+2]=p->core;
+                      sendData[rank][cntN[rank]*dataCnt+N[s]*6+3]=indexI;
                       cntN[rank]+=1;
+					       deleteFlag=ON;
 				       } else ;
 				       rank=nTasks;
 				    } else ; 
 			    }		//End of for(n<nTasks)
-             
+               
 			    if(deleteFlag==ON || domainShiftFlag==ON) {
                 if(cnt==1)  {
                    particle[i].head[s]->pt = p->next;
@@ -229,14 +236,9 @@ void rearrangeChicaneParticle(Domain *D)
 				       free(p);
 	                p=prev->next;
 				    }
-			    } else { 
-                cnt++;
-                p=p->next;
-             }
-             /*  lala
-             else if(shiftFlag==ON && domainShiftFlag==OFF) {
+			    } else if(shiftFlag==ON && domainShiftFlag==OFF) {
                 if(cnt==1)  {
-					    for(n=0; n<numInBeamlet; n++) p->theta[n]-=delTh;
+					    for(n=0; n<N[s]; n++) p->theta[n]-=delTh;
                    particle[i].head[s]->pt = p->next;
 	                p->next = particle[i+intZ].head[s]->pt;
 	                particle[i+intZ].head[s]->pt = p;
@@ -244,7 +246,7 @@ void rearrangeChicaneParticle(Domain *D)
 	                cnt=1;
 	             } else {
 	                prev->next = p->next;
-					    for(n=0; n<numInBeamlet; n++) p->theta[n]-=delTh;
+					    for(n=0; n<N[s]; n++) p->theta[n]-=delTh;
 	                p->next = particle[i+intZ].head[s]->pt;
 	                particle[i+intZ].head[s]->pt = p;
 	                p=prev->next;
@@ -254,11 +256,10 @@ void rearrangeChicaneParticle(Domain *D)
 			       p=p->next;
 			       cnt++;
 			    }	
-             */
+
           }	//End of while(p)
        }		//End of for(i)
        
-       /*  lala
        // domain-shifting particles
        for(rank=0; rank<nTasks; rank++)  {
           if(myrank==rank)  {
@@ -273,22 +274,22 @@ void rearrangeChicaneParticle(Domain *D)
              MPI_Recv(recvData[rank],recvN[rank]*dataCnt,MPI_DOUBLE,rank,rank,MPI_COMM_WORLD,&status);
 				  
              for(ii=0; ii<recvN[rank]; ii++)  {
-                indexI=recvData[rank][ii*dataCnt+numInBeamlet*6+3];
+                indexI=recvData[rank][ii*dataCnt+N[s]*6+3];
                 i=indexI-minI+startI;          
                 New = (ptclList *)malloc(sizeof(ptclList));
                 New->next = particle[i].head[s]->pt;
                 particle[i].head[s]->pt = New;
 
-                New->weight=recvData[rank][ii*dataCnt+numInBeamlet*6+0];
-                New->index=recvData[rank][ii*dataCnt+numInBeamlet*6+1];
-                New->core=recvData[rank][ii*dataCnt+numInBeamlet*6+2];
-                New->theta=(double *)malloc(numInBeamlet*sizeof(double ));
-                New->x=(double *)malloc(numInBeamlet*sizeof(double ));
-                New->y=(double *)malloc(numInBeamlet*sizeof(double ));
-                New->px=(double *)malloc(numInBeamlet*sizeof(double ));
-                New->py=(double *)malloc(numInBeamlet*sizeof(double ));
-                New->gamma=(double *)malloc(numInBeamlet*sizeof(double ));
-					 for(n=0; n<numInBeamlet; n++) {
+                New->weight=recvData[rank][ii*dataCnt+N[s]*6+0];
+                New->index=recvData[rank][ii*dataCnt+N[s]*6+1];
+                New->core=recvData[rank][ii*dataCnt+N[s]*6+2];
+                New->theta=(double *)malloc(N[s]*sizeof(double ));
+                New->x=(double *)malloc(N[s]*sizeof(double ));
+                New->y=(double *)malloc(N[s]*sizeof(double ));
+                New->px=(double *)malloc(N[s]*sizeof(double ));
+                New->py=(double *)malloc(N[s]*sizeof(double ));
+                New->gamma=(double *)malloc(N[s]*sizeof(double ));
+					 for(n=0; n<N[s]; n++) {
                    New->theta[n]=recvData[rank][ii*dataCnt+n*6+0];
                    New->x[n]=recvData[rank][ii*dataCnt+n*6+1];
                    New->y[n]=recvData[rank][ii*dataCnt+n*6+2];
@@ -306,16 +307,14 @@ void rearrangeChicaneParticle(Domain *D)
           free(sendData[rank]);
           free(recvData[rank]);
        }
-      */ 
-       LL=LL->next;
-       s++;
-    }
+       free(sendData);
+       free(recvData);
+	    free(cntN);
 
-	 //free(sendN);
-	 //free(recvN);
-    //free(sendData);
-    //free(recvData);
-	 //free(cntN);
+    }  //End of for(s)
+	 free(sendN);
+	 free(recvN);
+	 free(N);
 }
 
 

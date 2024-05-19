@@ -116,7 +116,6 @@ int main(int argc, char *argv[])
        	if(D.calChicaneFlag==ON) {
 			   calParticleDelay(&D,iteration);
        	   if(D.mode==Time_Dependent) rearrangeChicaneParticle(&D); else ;
-            printf("myrank=%d, end of rearrange\b",myrank);
             if(D.chi_SSON==ON) {
 		   	   selfSeed_Field(&D,iteration);
 					//if(D.chi_washONOFF==ON) washingOut(&D,iteration); else ;
@@ -124,7 +123,7 @@ int main(int argc, char *argv[])
                   printf("=============>> self-seeding is performed. at step=%d\n",iteration); 
                else ;
             } else {
-               //shiftChicaneField(&D);
+               shiftChicaneField(&D);
 			      if(myrank==0) 
                   printf("-------------->> Chicane is performed. at step=%d.\n",iteration); 
                else ;

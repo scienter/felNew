@@ -37,57 +37,74 @@ void boundary(Domain *D)
    dZ=D->lambda0*D->numSlice;
    minZ=D->minZ;
    sliceN=D->sliceN;
-
-   // finding minI, maxI, and minmax
    sumDouble=0;
-   N=D->nx*D->ny*D->numHarmony;
-   number=(double *)malloc(sliceN*sizeof(double ));
-   D->minmax=(int *)malloc((nTasks+1)*sizeof(int ));
-   D->minmax[0]=0;
-   D->minmax[nTasks]=sliceN;
-   for(i=0; i<sliceN; i++) number[i]=0;   
-     
-   LL=D->loadList;
-   while(LL->next) {
-      totalCnt=LL->numBeamlet*LL->numInBeamlet;
-      for(i=0; i<sliceN; i++) {
+
+   if(D->dimension==1) {
+     number=(double *)malloc(sliceN*sizeof(double ));
+     D->minmax=(int *)malloc((nTasks+1)*sizeof(int ));
+     D->minmax[0]=0;
+     D->minmax[nTasks]=sliceN;
+     for(i=0; i<sliceN; i++) number[i]=0;   
+     LL=D->loadList;
+     while(LL->next) {
+       totalCnt=LL->numBeamlet*LL->numInBeamlet;
+       for(i=0; i<sliceN; i++) {
          posZ=i*dZ+minZ;
          for(l=0; l<LL->znodes-1; l++) {
-            if(posZ>=LL->zpoint[l] && posZ<LL->zpoint[l+1]) {
-               n0=((LL->zn[l+1]-LL->zn[l])/(LL->zpoint[l+1]-LL->zpoint[l])*(posZ-LL->zpoint[l])+LL->zn[l]);
-               tmpDouble=n0*totalCnt;
-	            number[i]+=tmpDouble;
-               sumDouble+=tmpDouble;
-	         } else ;
+           if(posZ>=LL->zpoint[l] && posZ<LL->zpoint[l+1]) {
+             n0=((LL->zn[l+1]-LL->zn[l])/(LL->zpoint[l+1]-LL->zpoint[l])*(posZ-LL->zpoint[l])+LL->zn[l]);
+            tmpDouble=n0*totalCnt;
+	          number[i]+=tmpDouble;
+            sumDouble+=tmpDouble;
+	        } else ;
   	      }
-      }
-      LL->totalCnt=totalCnt;
-      LL=LL->next;
+       }
+       LL->totalCnt=totalCnt;
+       LL=LL->next;
+     }
+     if(myrank==0) {
+        tmpDouble=sumDouble/(1.0*nTasks);
+        max=0; rank=1;
+        sumDouble=0;
+        for(i=0; i<sliceN; i++) {
+           sumDouble+=number[i];
+           if(sumDouble>tmpDouble) {
+              sumDouble=0.0;
+              D->minmax[rank]=i;
+              rank++;
+            } else ;
+        }
+     } else ;
+     MPI_Bcast(D->minmax,nTasks+1,MPI_INT,0,MPI_COMM_WORLD);
+     D->minI=D->minmax[myrank];
+     D->maxI=D->minmax[myrank+1];
+     D->subSliceN=D->maxI-D->minI;
+
+     free(number);
+
+   } else if(D->dimension==3) {
+	  subCnt=D->sliceN/nTasks;
+     remain=D->sliceN%nTasks;
+     minN=maxN=0;
+     for(rank=0; rank<nTasks; rank++) {
+       if(rank<remain) tmpN=subCnt+1;
+       else            tmpN=subCnt;
+       minN=maxN;
+       maxN=minN+tmpN;
+       if(myrank==rank) {
+         D->minI=minN;
+         D->maxI=maxN;
+	 D->subSliceN=tmpN;
+       } else ;
+     }
    }
 
-   sumDouble+=sliceN*N*2;
-   for(i=0; i<sliceN; i++) number[i]+=N*2;
-   if(myrank==0) {
-      tmpDouble=sumDouble/(1.0*nTasks);
-      max=0; rank=1;
-      sumDouble=0;
-      for(i=0; i<sliceN; i++) {
-         sumDouble+=number[i];
-         if(sumDouble>tmpDouble) {
-            sumDouble=0.0;
-            D->minmax[rank]=i;
-            rank++;
-         } else ;
-      }
-   } else ;
-   MPI_Bcast(D->minmax,nTasks+1,MPI_INT,0,MPI_COMM_WORLD);
-   D->minI=D->minmax[myrank];
-   D->maxI=D->minmax[myrank+1];
-   D->subSliceN=D->maxI-D->minI;
-   free(number);
+
    MPI_Barrier(MPI_COMM_WORLD);
    printf("myrank=%d,minI=%d,maxI=%d,subSliceN=%d\n",myrank,D->minI,D->maxI,D->subSliceN);
   
+
+
    // Field memory setting
    D->U=complexMemory3Asign(D->numHarmony,D->subSliceN+2,D->nx,D->ny);
    D->Uc=complexMemory3Asign(D->numHarmony,D->subSliceN+2,D->nx,D->ny);
