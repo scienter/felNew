@@ -114,6 +114,7 @@ void selfSeed_Field(Domain *D,int iteration)
 	for(i=0; i<dataNum; i++) U[i]=0.0;
    numSlice=sliceN+2;
 
+   h=0;
    for(i=startI; i<endI; i++) 
 	{
       shiftT=(sliceN - (minI+i-startI))*dt + delayT;
@@ -162,7 +163,6 @@ void selfSeed_Field(Domain *D,int iteration)
    MPI_Barrier(MPI_COMM_WORLD);
    MPI_Bcast(U,dataNum,MPI_DOUBLE,0,MPI_COMM_WORLD);
 
-   h=0;
       for(i=startI; i<endI; i++) {
          nn=minI+i;
          ctau = (shiftT-(nn-1)*dt)*velocityC;

@@ -62,7 +62,7 @@ void calParticleDelay(Domain *D,int iteration)
            dz3=(L2-ld)*(1.0-vz/velocityC);
            shiftZ=4.0*dz1+2.0*dz2+dz3;
 	      
-           p->theta[n]+=(shiftZ0-shiftZ)*ks;
+           p->theta[n]-=(shiftZ0-shiftZ)*ks;
 
 			  //if(fabs((shiftZ-shiftZ0)*ks/numSlice)>=subSliceN) {
 			  //  printf("shiftSlice=%g, subSliceN=%d it is too much.\n",shiftZ-shiftZ0,subSliceN);
@@ -127,6 +127,7 @@ void rearrangeChicaneParticle(Domain *D)
          	 else if(aveTh<0) intZ=((int)(aveTh/dPhi))-1;
 	          else             intZ=0;
  
+             intZ=-1*intZ;
    	       indexI=i-startI+minI+intZ;
       	    for(rank=0; rank<nTasks; rank++) {
          	   if(D->minmax[rank]<=indexI && indexI<D->minmax[rank+1]) {
@@ -191,6 +192,7 @@ void rearrangeChicaneParticle(Domain *D)
 
 			    if(D->mode==Static) intZ=0; else ;
 
+             intZ=-1*intZ;
              indexI=i-startI+minI+intZ;
 			    if(indexI<0 || indexI>D->sliceN) deleteFlag=ON; else ;
 

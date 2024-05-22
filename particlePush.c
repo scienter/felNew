@@ -92,7 +92,7 @@ void drift_theta_gamma(Domain *D,int iteration)
                px=p->px[n];  py=p->py[n];
                invGam=1.0/p->gamma[n];
 			      tmp=ks*0.5*dz*invBeta0*(invGam0*invGam0-invGam*invGam*(1+px*px+py*py));
-			      p->theta[n]+=tmp;
+			      p->theta[n]-=tmp;
                p->gamma[n]-=wakeE*dz;
             }
             p=p->next;
@@ -317,13 +317,13 @@ void push_theta_gamma_3D(Domain *D,int iteration)
                       lList[m]=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
                    }   //End of for(m)
 
-                   tmp=dz/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
+                   tmp=1.0/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
                    if(tmp>=dPhi || tmp<=-dPhi) {
                       printf("iteration=%d, dTheta=%g, r=%g,sumEzPart=%g\n",iteration,tmp,r,sumEzPart); 
                       exit(0);
                    } else;
-                   p->theta[n]-=tmp;
-                   p->gamma[n]+=dz/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4])-dz*wakeE;
+                   p->theta[n]+=tmp;
+                   p->gamma[n]+=1.0/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4])-dz*wakeE;
                 }  // End of for(n)
 
              }     // End of for(m)
@@ -416,13 +416,13 @@ void push_theta_gamma_1D(Domain *D,int iteration)
                    lList[m]=dz*(ks*sumGam/2.0*invGam*invBeta + e_mc2*sumEzPart);
 					 }  //End of for(m)
 
-                tmp=dz/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
+                tmp=1.0/6.0*(kList[1]+2*kList[2]+2*kList[3]+kList[4]);
                 if(tmp>dPhi || tmp<-dPhi) { 
                    printf("iteration=%d, dTheta=%g, sumEzPart=%g, U[0]=%g\n",iteration,tmp,sumEzPart,cabs(D->U[0][i][0]));  //lala
                    exit(0);
                 } else ;
-                p->theta[n]-=tmp;
-                p->gamma[n]+=dz/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4]) - wakeE*dz;
+                p->theta[n]+=tmp;
+                p->gamma[n]+=1.0/6.0*(lList[1]+2*lList[2]+2*lList[3]+lList[4]) - wakeE*dz;
              }   //End of for(n)
 
 	          p=p->next;
@@ -483,7 +483,7 @@ void drift_theta_gamma_1D(Domain *D,int iteration)
            K=K0;
            gamma=p->gamma[n]; invGam=1.0/gamma;
            tmp = ks*dz*0.5*invBeta0*(invGam0*invGam0-invGam*invGam);
-			  p->theta[n]+=tmp;
+			  p->theta[n]-=tmp;
            p->gamma[n]-=wakeE*dz;
          }
 
